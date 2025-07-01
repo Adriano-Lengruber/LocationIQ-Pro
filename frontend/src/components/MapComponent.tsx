@@ -116,28 +116,48 @@ export default function MapComponent({ className = '' }: MapComponentProps) {
       `;
 
       new mapboxgl.Marker(markerElement)
-        .setLngLat([selectedLocation.lng, selectedLocation.lat])
+        .setLngLat([selectedLocation.coordinates.lng, selectedLocation.coordinates.lat])
         .addTo(map.current);
 
       // Centralizar no marcador
       map.current.flyTo({
-        center: [selectedLocation.lng, selectedLocation.lat],
+        center: [selectedLocation.coordinates.lng, selectedLocation.coordinates.lat],
         zoom: 15,
         essential: true
       });
     }
   }, [selectedLocation, mapLoaded]);
 
-  if (!process.env.NEXT_PUBLIC_MAPBOX_TOKEN) {
+  if (!process.env.NEXT_PUBLIC_MAPBOX_TOKEN || process.env.NEXT_PUBLIC_MAPBOX_TOKEN === 'your-mapbox-token-here') {
     return (
-      <div className={`flex items-center justify-center bg-gray-100 rounded-lg ${className}`}>
+      <div className={`flex items-center justify-center bg-gradient-to-br from-blue-100 to-blue-200 rounded-lg ${className}`}>
         <div className="text-center p-8">
+          <div className="bg-white rounded-full p-4 w-20 h-20 mx-auto mb-4 shadow-lg">
+            <svg className="w-12 h-12 text-blue-600 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+          </div>
           <h3 className="text-lg font-semibold text-gray-700 mb-2">
-            Token do Mapbox Necessário
+            Mapa em Modo Demo
           </h3>
-          <p className="text-sm text-gray-500">
-            Configure NEXT_PUBLIC_MAPBOX_TOKEN no arquivo .env.local
+          <p className="text-sm text-gray-600 mb-4">
+            Para ver o mapa real, configure sua chave do Mapbox
           </p>
+          <div className="bg-white rounded-lg p-4 shadow-sm">
+            <p className="text-xs text-gray-500 mb-2">Localização selecionada:</p>
+            {selectedLocation ? (
+              <div className="text-sm">
+                <p className="font-medium">{selectedLocation.address}</p>
+                <p className="text-gray-500">{selectedLocation.city}, {selectedLocation.state}</p>
+                <p className="text-xs text-blue-600 mt-1">
+                  📍 {selectedLocation.coordinates.lat.toFixed(4)}, {selectedLocation.coordinates.lng.toFixed(4)}
+                </p>
+              </div>
+            ) : (
+              <p className="text-sm text-gray-400">Use a busca para selecionar um local</p>
+            )}
+          </div>
         </div>
       </div>
     );

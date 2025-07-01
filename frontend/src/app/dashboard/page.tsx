@@ -14,7 +14,8 @@ import {
   Shield, 
   Store,
   MapPin,
-  Star
+  Star,
+  Loader2
 } from 'lucide-react';
 
 // Importação dinâmica do mapa para evitar problemas de SSR
@@ -137,12 +138,62 @@ function ScoreCard({ module }: { module: ModuleScore }) {
 }
 
 export default function DashboardPage() {
-  const { selectedLocation, isAnalyzing } = useLocationStore();
+  const { selectedLocation, isAnalyzing, analysisData } = useLocationStore();
   const [activeTab, setActiveTab] = useState('overview');
 
-  const overallScore = selectedLocation 
-    ? mockModuleScores.reduce((acc, module) => acc + module.score, 0) / mockModuleScores.length
-    : null;
+  // Usar dados da análise real se disponível
+  const moduleScores = analysisData ? [
+    {
+      id: 'residential',
+      name: 'Residencial',
+      icon: Home,
+      score: analysisData.modules.residential.score,
+      description: 'Análise habitacional',
+      color: 'bg-blue-500'
+    },
+    {
+      id: 'hospitality',
+      name: 'Hospedagem',
+      icon: Hotel,
+      score: analysisData.modules.hospitality.score,
+      description: 'Potencial turístico',
+      color: 'bg-purple-500'
+    },
+    {
+      id: 'investment',
+      name: 'Investimento',
+      icon: TrendingUp,
+      score: analysisData.modules.investment.score,
+      description: `ROI: ${analysisData.modules.investment.details.expectedROI}%`,
+      color: 'bg-green-500'
+    },
+    {
+      id: 'environmental',
+      name: 'Ambiental',
+      icon: Leaf,
+      score: analysisData.modules.environmental.score,
+      description: `Ar: ${analysisData.modules.environmental.details.airQuality}/100`,
+      color: 'bg-emerald-500'
+    },
+    {
+      id: 'security',
+      name: 'Segurança',
+      icon: Shield,
+      score: analysisData.modules.security.score,
+      description: `Crime: ${analysisData.modules.security.details.crimeIndex}/100`,
+      color: 'bg-indigo-500'
+    },
+    {
+      id: 'infrastructure',
+      name: 'Infraestrutura',
+      icon: Store,
+      score: analysisData.modules.infrastructure.score,
+      description: 'Conveniência urbana',
+      color: 'bg-orange-500'
+    }
+  ] : mockModuleScores;
+
+  const overallScore = analysisData ? analysisData.overallScore : null;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -224,12 +275,78 @@ export default function DashboardPage() {
             {/* Módulos de Análise */}
             {selectedLocation ? (
               <div className="space-y-4">
-                <h3 className="font-semibold text-gray-900">Análise por Módulo</h3>
-                <div className="grid grid-cols-1 gap-3">
-                  {mockModuleScores.map((module) => (
-                    <ScoreCard key={module.id} module={module} />
-                  ))}
+                <div className="flex items-center justify-between">
+                  <h3 className="font-semibold text-gray-900">Análise por Módulo</h3>
+                  {isAnalyzing && (
+                    <div className="flex items-center text-sm text-blue-600">
+                      <Loader2 className="h-4 w-4 animate-spin mr-1" />
+                      Analisando...
+                    </div>
+                  )}
                 </div>
+                
+                {isAnalyzing ? (
+                  <Card>
+                    <CardContent className="p-6">
+                      <div className="text-center">
+                        <Loader2 className="h-8 w-8 animate-spin text-blue-600 mx-auto mb-3" />
+                        <h4 className="font-medium text-gray-900 mb-2">Processando Análise</h4>
+                        <p className="text-sm text-gray-500">
+                          Calculando scores inteligentes baseados na localização...
+                        </p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ) : (
+                  <>
+                    <div className="grid grid-cols-1 gap-3">
+                      {moduleScores.map((module) => (
+                        <ScoreCard key={module.id} module={module} />
+                      ))}
+                    </div>
+
+                    {/* Insights e Recomendações */}
+                    {analysisData && (
+                      <div className="mt-6 space-y-4">
+                        {analysisData.insights.length > 0 && (
+                          <Card>
+                            <CardHeader>
+                              <CardTitle className="text-sm">💡 Insights</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                              <ul className="space-y-2">
+                                {analysisData.insights.map((insight, index) => (
+                                  <li key={index} className="text-sm text-gray-600 flex items-start">
+                                    <span className="mr-2">•</span>
+                                    {insight}
+                                  </li>
+                                ))}
+                              </ul>
+                            </CardContent>
+                          </Card>
+                        )}
+
+                        {analysisData.recommendations.length > 0 && (
+                          <Card>
+                            <CardHeader>
+                              <CardTitle className="text-sm">📋 Recomendações</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                              <ul className="space-y-2">
+                                {analysisData.recommendations.map((rec, index) => (
+                                  <li key={index} className="text-sm text-gray-600 flex items-start">
+                                    <span className="mr-2">→</span>
+                                    {rec}
+                                  </li>
+                                ))}
+                              </ul>
+                            </CardContent>
+                          </Card>
+                        )}
+                      </div>
+                    )}
+                  </>
+                )}
               </div>
             ) : (
               <Card>

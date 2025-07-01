@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Search, MapPin, Loader2, X } from 'lucide-react';
 import { useLocationStore } from '@/stores/locationStore';
+import { LocationData } from '@/services/mockDataService';
 
 export default function LocationSearch() {
   const [isOpen, setIsOpen] = useState(false);
@@ -14,71 +15,22 @@ export default function LocationSearch() {
     isSearching,
     searchResults,
     setSearchQuery,
-    setIsSearching,
-    setSearchResults,
     setSelectedLocation,
     setMapCenter,
-    clearSearch
+    clearSearch,
+    searchLocations,
+    analyzeLocation
   } = useLocationStore();
-
-  // Função para buscar localizações usando Mapbox Geocoding API
-  const searchLocations = async (query: string) => {
-    if (!query.trim() || query.length < 3) {
-      setSearchResults([]);
-      return;
-    }
-
-    setIsSearching(true);
-    
-    try {
-      const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
-      if (!token) {
-        throw new Error('Token do Mapbox não encontrado');
-      }
-
-      const response = await fetch(
-        `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?` +
-        `access_token=${token}&` +
-        `country=BR&` +
-        `limit=5&` +
-        `language=pt`
-      );
-
-      if (!response.ok) {
-        throw new Error('Erro na busca');
-      }
-
-      const data = await response.json();
-      
-      const results = data.features?.map((feature: any) => ({
-        id: feature.id,
-        lat: feature.center[1],
-        lng: feature.center[0],
-        place_name: feature.place_name,
-        center: feature.center,
-        address: feature.text,
-        city: feature.context?.find((c: any) => c.id.includes('place'))?.text,
-        state: feature.context?.find((c: any) => c.id.includes('region'))?.text,
-        country: feature.context?.find((c: any) => c.id.includes('country'))?.text,
-      })) || [];
-
-      setSearchResults(results);
-    } catch (error) {
-      console.error('Erro ao buscar localizações:', error);
-      setSearchResults([]);
-    } finally {
-      setIsSearching(false);
-    }
-  };
 
   // Debounce da busca
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      searchLocations(searchQuery);
-    }, 300);
-
-    return () => clearTimeout(timeoutId);
-  }, [searchQuery]);
+    if (searchQuery.length >= 3) {
+      const timeoutId = setTimeout(() => {
+        searchLocations(searchQuery);
+      }, 300);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [searchQuery, searchLocations]);
 
   // Fechar dropdown ao clicar fora
   useEffect(() => {
@@ -92,21 +44,15 @@ export default function LocationSearch() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const handleSelectLocation = (result: any) => {
-    const location = {
-      lat: result.lat,
-      lng: result.lng,
-      address: result.place_name,
-      city: result.city,
-      state: result.state,
-      country: result.country,
-    };
-
+  const handleSelectLocation = async (location: LocationData) => {
     setSelectedLocation(location);
-    setMapCenter(result.center);
-    setSearchQuery(result.place_name);
+    setMapCenter([location.coordinates.lng, location.coordinates.lat]);
+    setSearchQuery(location.address);
     setIsOpen(false);
     clearSearch();
+    
+    // Iniciar análise automática
+    await analyzeLocation(location);
   };
 
   const handleClearSearch = () => {
@@ -172,9 +118,9 @@ export default function LocationSearch() {
             </div>
           )}
           
-          {searchResults.map((result) => (
+          {searchResults.map((result, index) => (
             <button
-              key={result.id}
+              key={index}
               onClick={() => handleSelectLocation(result)}
               className="w-full px-4 py-3 text-left hover:bg-gray-50 
                          border-b border-gray-100 last:border-b-0 
@@ -189,7 +135,7 @@ export default function LocationSearch() {
                   <p className="text-xs text-gray-500 truncate">
                     {result.city && result.state 
                       ? `${result.city}, ${result.state}` 
-                      : result.place_name}
+                      : result.address}
                   </p>
                 </div>
               </div>

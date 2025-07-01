@@ -1,0 +1,319 @@
+// Sistema de Mock Data Inteligente - LocationIQ Pro
+// Gera dados realistas baseados na localização geográfica
+
+export interface LocationData {
+  coordinates: {
+    lat: number;
+    lng: number;
+  };
+  address: string;
+  city?: string;
+  state?: string;
+  country?: string;
+}
+
+export interface ModuleScore {
+  score: number;
+  factors: string[];
+  trend: 'up' | 'down' | 'stable';
+  details: Record<string, any>;
+}
+
+export interface LocationAnalysis {
+  location: LocationData;
+  overallScore: number;
+  lastUpdated: Date;
+  modules: {
+    residential: ModuleScore;
+    hospitality: ModuleScore;
+    investment: ModuleScore;
+    environmental: ModuleScore;
+    security: ModuleScore;
+    infrastructure: ModuleScore;
+  };
+  insights: string[];
+  recommendations: string[];
+}
+
+// Dados base de cidades brasileiras para referência
+const cityProfiles = {
+  'São Paulo': {
+    baseScores: { residential: 7.5, hospitality: 8.5, investment: 9.0, environmental: 5.5, security: 6.5, infrastructure: 8.5 },
+    characteristics: ['metropolitana', 'financeira', 'diversa', 'densa'],
+    averagePropertyPrice: 8500,
+    crimeIndex: 65,
+    airQuality: 45
+  },
+  'Rio de Janeiro': {
+    baseScores: { residential: 7.8, hospitality: 9.2, investment: 8.5, environmental: 6.0, security: 5.8, infrastructure: 7.5 },
+    characteristics: ['turística', 'praia', 'cultural', 'montanhas'],
+    averagePropertyPrice: 7500,
+    crimeIndex: 72,
+    airQuality: 55
+  },
+  'Brasília': {
+    baseScores: { residential: 8.2, hospitality: 7.0, investment: 7.5, environmental: 7.5, security: 7.8, infrastructure: 8.8 },
+    characteristics: ['planejada', 'governo', 'moderna', 'organizada'],
+    averagePropertyPrice: 6500,
+    crimeIndex: 45,
+    airQuality: 70
+  },
+  'Salvador': {
+    baseScores: { residential: 7.0, hospitality: 8.8, investment: 7.8, environmental: 6.8, security: 6.2, infrastructure: 7.2 },
+    characteristics: ['histórica', 'praia', 'cultural', 'tropical'],
+    averagePropertyPrice: 4500,
+    crimeIndex: 68,
+    airQuality: 65
+  },
+  'Belo Horizonte': {
+    baseScores: { residential: 8.0, hospitality: 7.5, investment: 8.0, environmental: 6.5, security: 7.2, infrastructure: 8.0 },
+    characteristics: ['montanhas', 'mineira', 'gastronômica', 'tecnológica'],
+    averagePropertyPrice: 5500,
+    crimeIndex: 55,
+    airQuality: 60
+  }
+};
+
+// Função para calcular scores baseados na localização
+function calculateLocationScores(location: LocationData): LocationAnalysis['modules'] {
+  const { coordinates, city } = location;
+  const { lat, lng } = coordinates;
+  
+  // Score base da cidade (se conhecida)
+  const cityProfile = city ? cityProfiles[city as keyof typeof cityProfiles] : null;
+  const baseScores = cityProfile?.baseScores || {
+    residential: 7.0, hospitality: 7.0, investment: 7.0, 
+    environmental: 7.0, security: 7.0, infrastructure: 7.0
+  };
+
+  // Fatores geográficos que influenciam scores
+  const geoFactors = {
+    // Proximidade ao centro (assumindo centros urbanos em coordenadas específicas)
+    centerDistance: Math.abs(lat + lng) % 0.1, // Simplificado
+    // Altitude simulada baseada em latitude
+    altitude: Math.abs(lat) * 100,
+    // Proximidade ao litoral (longitude próxima a -40 = costa brasileira)
+    coastalProximity: Math.max(0, 1 - Math.abs(lng + 40) / 10)
+  };
+
+  // Algoritmo de scoring inteligente
+  const residential: ModuleScore = {
+    score: Math.min(10, Math.max(1, 
+      baseScores.residential + 
+      (geoFactors.coastalProximity * 0.5) - 
+      (geoFactors.centerDistance * 2) +
+      (Math.random() - 0.5) * 1.5
+    )),
+    factors: [
+      'Qualidade dos imóveis',
+      'Infraestrutura do bairro', 
+      'Valorização histórica',
+      'Densidade populacional'
+    ],
+    trend: Math.random() > 0.5 ? 'up' : 'stable',
+    details: {
+      averagePrice: (cityProfile?.averagePropertyPrice || 6000) * (1 + geoFactors.coastalProximity * 0.3),
+      pricePerM2: Math.round((cityProfile?.averagePropertyPrice || 6000) * 1.2),
+      appreciation: Math.round((Math.random() * 10 + 2) * 100) / 100
+    }
+  };
+
+  const hospitality: ModuleScore = {
+    score: Math.min(10, Math.max(1,
+      baseScores.hospitality +
+      (geoFactors.coastalProximity * 1.5) +
+      (cityProfile?.characteristics.includes('turística') ? 1.0 : 0) +
+      (Math.random() - 0.5) * 1.0
+    )),
+    factors: [
+      'Atrações turísticas',
+      'Qualidade dos hotéis',
+      'Restaurantes e lazer',
+      'Acessibilidade'
+    ],
+    trend: Math.random() > 0.6 ? 'up' : 'stable',
+    details: {
+      averageHotelPrice: Math.round(80 + geoFactors.coastalProximity * 120 + Math.random() * 50),
+      occupancyRate: Math.round((60 + geoFactors.coastalProximity * 30) * 100) / 100,
+      seasonalVariation: Math.round((20 + geoFactors.coastalProximity * 40) * 100) / 100
+    }
+  };
+
+  const investment: ModuleScore = {
+    score: Math.min(10, Math.max(1,
+      baseScores.investment +
+      (residential.score - 7) * 0.3 +
+      (hospitality.score - 7) * 0.2 +
+      (Math.random() - 0.5) * 1.2
+    )),
+    factors: [
+      'Potencial de ROI',
+      'Crescimento da região',
+      'Demanda por aluguel',
+      'Liquidez do mercado'
+    ],
+    trend: Math.random() > 0.4 ? 'up' : 'stable',
+    details: {
+      expectedROI: Math.round((8 + Math.random() * 6) * 100) / 100,
+      paybackYears: Math.round((12 + Math.random() * 8) * 10) / 10,
+      marketLiquidity: Math.round((0.6 + Math.random() * 0.3) * 100) / 100
+    }
+  };
+
+  const environmental: ModuleScore = {
+    score: Math.min(10, Math.max(1,
+      baseScores.environmental +
+      (geoFactors.coastalProximity * 0.8) -
+      (geoFactors.centerDistance * 1.5) +
+      (Math.random() - 0.5) * 1.0
+    )),
+    factors: [
+      'Qualidade do ar',
+      'Níveis de ruído',
+      'Áreas verdes',
+      'Poluição urbana'
+    ],
+    trend: Math.random() > 0.7 ? 'down' : 'stable',
+    details: {
+      airQuality: cityProfile?.airQuality || Math.round(50 + Math.random() * 40),
+      noiseLevel: Math.round(45 + geoFactors.centerDistance * 20 + Math.random() * 15),
+      greenSpaces: Math.round((30 + geoFactors.coastalProximity * 20) * 100) / 100
+    }
+  };
+
+  const security: ModuleScore = {
+    score: Math.min(10, Math.max(1,
+      baseScores.security -
+      (geoFactors.centerDistance * 1.0) +
+      (cityProfile?.characteristics.includes('planejada') ? 1.0 : 0) +
+      (Math.random() - 0.5) * 1.3
+    )),
+    factors: [
+      'Índice de criminalidade',
+      'Policiamento',
+      'Iluminação pública',
+      'Vigilância'
+    ],
+    trend: Math.random() > 0.8 ? 'up' : 'stable',
+    details: {
+      crimeIndex: cityProfile?.crimeIndex || Math.round(40 + Math.random() * 40),
+      policeStations: Math.round(1 + Math.random() * 3),
+      emergencyResponse: Math.round((5 + Math.random() * 10) * 10) / 10
+    }
+  };
+
+  const infrastructure: ModuleScore = {
+    score: Math.min(10, Math.max(1,
+      baseScores.infrastructure -
+      (geoFactors.centerDistance * 0.8) +
+      (cityProfile?.characteristics.includes('planejada') ? 1.2 : 0) +
+      (Math.random() - 0.5) * 1.0
+    )),
+    factors: [
+      'Transporte público',
+      'Internet e telefonia',
+      'Serviços essenciais',
+      'Comércio local'
+    ],
+    trend: Math.random() > 0.6 ? 'up' : 'stable',
+    details: {
+      publicTransport: Math.round((6 + Math.random() * 4) * 10) / 10,
+      internetSpeed: Math.round(50 + Math.random() * 100),
+      nearbyServices: Math.round(5 + Math.random() * 10)
+    }
+  };
+
+  return {
+    residential,
+    hospitality,
+    investment,
+    environmental,
+    security,
+    infrastructure
+  };
+}
+
+// Função principal para gerar análise completa
+export function generateLocationAnalysis(location: LocationData): LocationAnalysis {
+  const modules = calculateLocationScores(location);
+  
+  // Calcular score geral
+  const scores = Object.values(modules).map(m => m.score);
+  const overallScore = Math.round((scores.reduce((a, b) => a + b, 0) / scores.length) * 10) / 10;
+  
+  // Gerar insights inteligentes
+  const insights: string[] = [];
+  const recommendations: string[] = [];
+  
+  // Insights baseados nos scores
+  if (modules.investment.score > 8.5) {
+    insights.push('🚀 Excelente potencial de investimento detectado');
+  }
+  if (modules.security.score < 6.0) {
+    insights.push('⚠️ Índices de segurança abaixo da média regional');
+    recommendations.push('Considere áreas com melhor policiamento');
+  }
+  if (modules.environmental.score > 8.0) {
+    insights.push('🌿 Qualidade ambiental acima da média');
+  }
+  if (modules.hospitality.score > 8.0) {
+    insights.push('🏨 Forte vocação turística identificada');
+    recommendations.push('Considere investimentos em hospedagem');
+  }
+  if (modules.infrastructure.score > 8.5) {
+    insights.push('🏗️ Infraestrutura urbana de excelência');
+  }
+
+  // Insights gerais
+  if (overallScore > 8.5) {
+    insights.push('⭐ Localização premium com múltiplas vantagens');
+  } else if (overallScore < 6.5) {
+    recommendations.push('Avalie outras opções na região');
+  }
+
+  return {
+    location,
+    overallScore,
+    lastUpdated: new Date(),
+    modules,
+    insights,
+    recommendations
+  };
+}
+
+// Mock de API para simular chamadas
+export class MockLocationAPI {
+  static async searchLocations(query: string): Promise<LocationData[]> {
+    // Simular delay de API
+    await new Promise(resolve => setTimeout(resolve, 300 + Math.random() * 500));
+    
+    // Mock de resultados baseados na query
+    const mockResults: LocationData[] = [
+      {
+        coordinates: { lat: -23.5505, lng: -46.6333 },
+        address: `${query}, São Paulo, SP`,
+        city: 'São Paulo',
+        state: 'São Paulo',
+        country: 'Brasil'
+      },
+      {
+        coordinates: { lat: -22.9068, lng: -43.1729 },
+        address: `${query}, Rio de Janeiro, RJ`,
+        city: 'Rio de Janeiro', 
+        state: 'Rio de Janeiro',
+        country: 'Brasil'
+      }
+    ];
+
+    return mockResults.filter(result => 
+      result.address.toLowerCase().includes(query.toLowerCase())
+    );
+  }
+
+  static async analyzeLocation(location: LocationData): Promise<LocationAnalysis> {
+    // Simular delay de processamento
+    await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 1500));
+    
+    return generateLocationAnalysis(location);
+  }
+}

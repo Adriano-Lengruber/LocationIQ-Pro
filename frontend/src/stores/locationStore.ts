@@ -1,48 +1,41 @@
 import { create } from 'zustand'
-
-interface Location {
-  id?: string;
-  lat: number;
-  lng: number;
-  address?: string;
-  city?: string;
-  state?: string;
-  country?: string;
-  place_name?: string;
-  center?: [number, number];
-}
+import { LocationData, LocationAnalysis, MockLocationAPI } from '@/services/mockDataService'
 
 interface LocationState {
   // Estado do mapa
-  currentLocation: Location | null;
+  currentLocation: LocationData | null;
   mapCenter: [number, number];
   mapZoom: number;
   
   // Estado de busca
   searchQuery: string;
   isSearching: boolean;
-  searchResults: Location[];
+  searchResults: LocationData[];
   
   // Estado de análise
-  selectedLocation: Location | null;
+  selectedLocation: LocationData | null;
   isAnalyzing: boolean;
-  analysisData: any;
+  analysisData: LocationAnalysis | null;
   
   // Ações
-  setCurrentLocation: (location: Location) => void;
+  setCurrentLocation: (location: LocationData) => void;
   setMapCenter: (center: [number, number]) => void;
   setMapZoom: (zoom: number) => void;
   setSearchQuery: (query: string) => void;
   setIsSearching: (isSearching: boolean) => void;
-  setSearchResults: (results: Location[]) => void;
-  setSelectedLocation: (location: Location | null) => void;
+  setSearchResults: (results: LocationData[]) => void;
+  setSelectedLocation: (location: LocationData | null) => void;
   setIsAnalyzing: (isAnalyzing: boolean) => void;
-  setAnalysisData: (data: any) => void;
+  setAnalysisData: (data: LocationAnalysis | null) => void;
   clearSearch: () => void;
   clearAnalysis: () => void;
+  
+  // Ações avançadas
+  searchLocations: (query: string) => Promise<void>;
+  analyzeLocation: (location: LocationData) => Promise<void>;
 }
 
-export const useLocationStore = create<LocationState>((set) => ({
+export const useLocationStore = create<LocationState>((set, get) => ({
   // Estado inicial
   currentLocation: null,
   mapCenter: [-46.6333, -23.5505], // São Paulo como padrão
@@ -54,7 +47,7 @@ export const useLocationStore = create<LocationState>((set) => ({
   isAnalyzing: false,
   analysisData: null,
   
-  // Ações
+  // Ações básicas
   setCurrentLocation: (location) => set({ currentLocation: location }),
   setMapCenter: (center) => set({ mapCenter: center }),
   setMapZoom: (zoom) => set({ mapZoom: zoom }),
@@ -75,4 +68,36 @@ export const useLocationStore = create<LocationState>((set) => ({
     analysisData: null, 
     isAnalyzing: false 
   }),
+  
+  // Ações avançadas
+  searchLocations: async (query: string) => {
+    set({ isSearching: true });
+    try {
+      const results = await MockLocationAPI.searchLocations(query);
+      set({ searchResults: results });
+    } catch (error) {
+      console.error('Erro na busca:', error);
+      set({ searchResults: [] });
+    } finally {
+      set({ isSearching: false });
+    }
+  },
+  
+  analyzeLocation: async (location: LocationData) => {
+    set({ 
+      isAnalyzing: true, 
+      selectedLocation: location,
+      mapCenter: [location.coordinates.lng, location.coordinates.lat]
+    });
+    
+    try {
+      const analysis = await MockLocationAPI.analyzeLocation(location);
+      set({ analysisData: analysis });
+    } catch (error) {
+      console.error('Erro na análise:', error);
+      set({ analysisData: null });
+    } finally {
+      set({ isAnalyzing: false });
+    }
+  }
 }));
