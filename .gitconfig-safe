@@ -8,7 +8,8 @@
 [pull]
 	rebase = false
 [credential]
-	helper = manager-core
+	helper = manager
+	useHttpPath = true
 [http]
 	sslverify = true
 [alias]
