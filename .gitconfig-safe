@@ -1,0 +1,25 @@
+[core]
+	autocrlf = true
+	safecrlf = false
+	editor = "code --wait"
+	quotepath = false
+[init]
+	defaultBranch = main
+[pull]
+	rebase = false
+[credential]
+	helper = manager-core
+[http]
+	sslverify = true
+[alias]
+	st = status
+	co = checkout
+	br = branch
+	ci = commit
+	lg = log --oneline --graph --decorate
+[i18n]
+	commitencoding = utf-8
+	logoutputencoding = utf-8
+[user]
+	name = Adriano-Lengruber
+	email = adrianolengruber@hotmail.com

@@ -1,0 +1,52 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Start Backend Server",
+			"type": "shell",
+			"command": "cd backend && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload",
+			"group": "build",
+			"isBackground": true,
+			"problemMatcher": [],
+			"args": []
+		},
+		{
+			"label": "Start Frontend Server",
+			"type": "shell",
+			"command": "cd frontend && npm run dev",
+			"group": "build",
+			"isBackground": true,
+			"problemMatcher": [],
+			"args": []
+		},
+		{
+			"label": "Start Full Stack",
+			"dependsOrder": "parallel",
+			"dependsOn": [
+				"Start Backend Server",
+				"Start Frontend Server"
+			],
+			"group": "build",
+			"isBackground": true,
+			"problemMatcher": []
+		},
+		{
+			"label": "Initialize Database",
+			"type": "shell",
+			"command": "cd backend && python init_db.py",
+			"group": "build",
+			"isBackground": false,
+			"problemMatcher": [],
+			"args": []
+		},
+		{
+			"label": "Test Database",
+			"type": "shell",
+			"command": "cd backend && python test_db.py",
+			"group": "test",
+			"isBackground": false,
+			"problemMatcher": [],
+			"args": []
+		}
+	]
+}
