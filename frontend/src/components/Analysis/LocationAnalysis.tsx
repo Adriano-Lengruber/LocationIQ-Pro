@@ -29,7 +29,7 @@ const ScoreCard = ({
 }: { 
   title: string; 
   score: number; 
-  icon: any; 
+  icon: React.ElementType; 
   color: string; 
 }) => {
   const getScoreColor = (score: number) => {

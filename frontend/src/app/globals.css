@@ -1,7 +1,26 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@import "../styles/leaflet.css";
 
 @custom-variant dark (&:is(.dark *));
+
+/* Search dropdown z-index fix */
+.search-dropdown {
+  position: absolute !important;
+  z-index: 999999 !important;
+  top: 100% !important;
+  left: 0 !important;
+  right: 0 !important;
+}
+
+/* Ensure no other elements interfere with search dropdown */
+.leaflet-container {
+  z-index: 1 !important;
+}
+
+.map-container {
+  z-index: 1 !important;
+}
 
 @theme inline {
   --color-background: var(--background);
