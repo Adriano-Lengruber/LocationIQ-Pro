@@ -35,7 +35,7 @@ interface LocationState {
   analyzeLocation: (location: LocationData) => Promise<void>;
 }
 
-export const useLocationStore = create<LocationState>((set, get) => ({
+export const useLocationStore = create<LocationState>((set) => ({
   // Estado inicial
   currentLocation: null,
   mapCenter: [-46.6333, -23.5505], // São Paulo como padrão

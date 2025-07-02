@@ -16,7 +16,7 @@ export interface ModuleScore {
   score: number;
   factors: string[];
   trend: 'up' | 'down' | 'stable';
-  details: Record<string, any>;
+  details: Record<string, number | string | boolean>;
 }
 
 export interface LocationAnalysis {
