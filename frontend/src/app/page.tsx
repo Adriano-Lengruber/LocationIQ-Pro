@@ -55,10 +55,44 @@ export default function HomePage() {
             </span>
           </h1>
           
-          <p className="text-xl text-gray-600 mb-12 max-w-3xl mx-auto">
+          <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
             Plataforma completa que combina dados imobiliários, ambientais, de segurança e 
             infraestrutura para fornecer insights abrangentes sobre qualquer localização urbana.
           </p>
+
+          {/* Destaque 100% Gratuito */}
+          <div className="bg-gradient-to-r from-green-100 to-blue-100 border border-green-200 rounded-xl p-6 max-w-4xl mx-auto mb-12">
+            <div className="flex items-center justify-center gap-3 mb-4">
+              <CheckCircle className="h-8 w-8 text-green-600" />
+              <h2 className="text-2xl font-bold text-gray-900">100% Gratuito & Open Source</h2>
+            </div>
+            <p className="text-lg text-gray-700 mb-4 text-center">
+              Priorizamos tecnologias gratuitas e open source para democratizar o acesso à análise de dados geoespaciais
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+              <div className="bg-white/80 rounded-lg p-3 border border-green-200">
+                <div className="flex items-center gap-2 mb-2">
+                  <MapPin className="h-4 w-4 text-green-600" />
+                  <span className="font-semibold">Mapas</span>
+                </div>
+                <p className="text-gray-600">OpenStreetMap + Leaflet (sempre gratuito)</p>
+              </div>
+              <div className="bg-white/80 rounded-lg p-3 border border-green-200">
+                <div className="flex items-center gap-2 mb-2">
+                  <Leaf className="h-4 w-4 text-green-600" />
+                  <span className="font-semibold">Dados</span>
+                </div>
+                <p className="text-gray-600">APIs gratuitas + dados mock inclusos</p>
+              </div>
+              <div className="bg-white/80 rounded-lg p-3 border border-green-200">
+                <div className="flex items-center gap-2 mb-2">
+                  <Star className="h-4 w-4 text-green-600" />
+                  <span className="font-semibold">Código</span>
+                </div>
+                <p className="text-gray-600">100% open source no GitHub</p>
+              </div>
+            </div>
+          </div>
 
           <div className="flex justify-center mb-16">
             <Link 
@@ -76,13 +110,13 @@ export default function HomePage() {
               <div className="text-2xl font-bold text-blue-600">6</div>
               <div className="text-sm text-gray-600">Módulos de Análise</div>
             </div>
-            <div className="bg-white/80 rounded-lg p-4 border border-gray-200">
-              <div className="text-2xl font-bold text-green-600">100%</div>
-              <div className="text-sm text-gray-600">Gratuito</div>
+            <div className="bg-green-50 rounded-lg p-4 border border-green-200">
+              <div className="text-2xl font-bold text-green-600">$0</div>
+              <div className="text-sm text-gray-600">Custo Total</div>
             </div>
             <div className="bg-white/80 rounded-lg p-4 border border-gray-200">
-              <div className="text-2xl font-bold text-purple-600">20+</div>
-              <div className="text-sm text-gray-600">Indicadores</div>
+              <div className="text-2xl font-bold text-purple-600">15+</div>
+              <div className="text-sm text-gray-600">Cidades Brasileiras</div>
             </div>
             <div className="bg-white/80 rounded-lg p-4 border border-gray-200">
               <div className="text-2xl font-bold text-orange-600">∞</div>
@@ -288,117 +322,126 @@ export default function HomePage() {
         <div className="max-w-6xl mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Configuração de APIs
+              APIs 100% Gratuitas
             </h2>
             <p className="text-xl text-gray-600 mb-6">
-              Para testar todas as funcionalidades, configure as APIs externas abaixo
+              Alternativas gratuitas selecionadas para substituir APIs pagas sem perder qualidade
             </p>
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 max-w-3xl mx-auto">
-              <p className="text-blue-800 text-sm">
-                💡 <strong>Importante:</strong> O projeto funciona 100% sem APIs externas usando dados mock. 
-                As APIs são opcionais para dados reais.
+            <div className="bg-green-50 border border-green-200 rounded-lg p-4 max-w-4xl mx-auto">
+              <p className="text-green-800 text-sm">
+                💡 <strong>Compromisso:</strong> Todas as APIs integradas são 100% gratuitas, sem limites restritivos. 
+                Nenhuma configuração paga é necessária para usar o projeto.
               </p>
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Essential APIs */}
+            {/* Free Essential APIs */}
             <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-6 border border-green-200">
               <div className="flex items-center gap-3 mb-4">
                 <CheckCircle className="h-6 w-6 text-green-600" />
-                <h3 className="text-xl font-bold text-gray-900">APIs Essenciais</h3>
+                <h3 className="text-xl font-bold text-gray-900">APIs Gratuitas Integradas</h3>
               </div>
-              <p className="text-gray-700 mb-6">Recomendadas para melhor experiência</p>
+              <p className="text-gray-700 mb-6">Funcionam imediatamente, sem configuração</p>
               
               <div className="space-y-4">
                 <div className="bg-white rounded-lg p-4 border border-green-200">
                   <div className="flex items-center justify-between mb-2">
-                    <h4 className="font-semibold text-gray-900">Google Places API</h4>
+                    <h4 className="font-semibold text-gray-900">OpenStreetMap + Leaflet</h4>
+                    <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded">Ativo</span>
+                  </div>
+                  <p className="text-sm text-gray-600 mb-2">Mapas interativos sem limitações</p>
+                  <div className="text-xs text-gray-500">✓ Sem API key ✓ Sem limites ✓ Open source</div>
+                </div>
+
+                <div className="bg-white rounded-lg p-4 border border-green-200">
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="font-semibold text-gray-900">WeatherAPI.com</h4>
                     <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded">Grátis</span>
                   </div>
-                  <p className="text-sm text-gray-600 mb-2">Para dados de infraestrutura e amenidades</p>
+                  <p className="text-sm text-gray-600 mb-2">Dados climáticos e qualidade do ar</p>
                   <a 
-                    href="https://developers.google.com/maps/documentation/places" 
+                    href="https://www.weatherapi.com" 
                     target="_blank"
                     className="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800"
                   >
                     <ExternalLink className="h-3 w-3" />
-                    Obter API Key
+                    1M requisições grátis/mês
                   </a>
                 </div>
 
                 <div className="bg-white rounded-lg p-4 border border-green-200">
                   <div className="flex items-center justify-between mb-2">
-                    <h4 className="font-semibold text-gray-900">OpenWeatherMap</h4>
-                    <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded">Grátis</span>
+                    <h4 className="font-semibold text-gray-900">OpenAQ</h4>
+                    <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded">Open Source</span>
                   </div>
-                  <p className="text-sm text-gray-600 mb-2">Para dados climáticos e ambientais</p>
+                  <p className="text-sm text-gray-600 mb-2">Qualidade do ar global e gratuita</p>
                   <a 
-                    href="https://openweathermap.org/api" 
+                    href="https://openaq.org" 
                     target="_blank"
                     className="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800"
                   >
                     <ExternalLink className="h-3 w-3" />
-                    Obter API Key
+                    API totalmente gratuita
                   </a>
                 </div>
               </div>
             </div>
 
-            {/* Optional APIs */}
-            <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl p-6 border border-orange-200">
+            {/* Enhanced Free APIs */}
+            <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 border border-blue-200">
               <div className="flex items-center gap-3 mb-4">
-                <Star className="h-6 w-6 text-orange-600" />
-                <h3 className="text-xl font-bold text-gray-900">APIs Opcionais</h3>
+                <Star className="h-6 w-6 text-blue-600" />
+                <h3 className="text-xl font-bold text-gray-900">APIs Opcionais (Gratuitas)</h3>
               </div>
               <p className="text-gray-700 mb-6">Para funcionalidades avançadas</p>
               
               <div className="space-y-4">
-                <div className="bg-white rounded-lg p-4 border border-orange-200">
+                <div className="bg-white rounded-lg p-4 border border-blue-200">
                   <div className="flex items-center justify-between mb-2">
-                    <h4 className="font-semibold text-gray-900">AirVisual API</h4>
-                    <span className="text-xs bg-orange-100 text-orange-700 px-2 py-1 rounded">Freemium</span>
+                    <h4 className="font-semibold text-gray-900">Overpass API</h4>
+                    <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">Open Source</span>
                   </div>
-                  <p className="text-sm text-gray-600 mb-2">Para dados detalhados de qualidade do ar</p>
+                  <p className="text-sm text-gray-600 mb-2">Dados de infraestrutura do OpenStreetMap</p>
                   <a 
-                    href="https://www.iqair.com/air-pollution-data-api" 
+                    href="https://overpass-turbo.eu" 
                     target="_blank"
                     className="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800"
                   >
                     <ExternalLink className="h-3 w-3" />
-                    Obter API Key
+                    Substitui Google Places gratuitamente
                   </a>
                 </div>
 
-                <div className="bg-white rounded-lg p-4 border border-orange-200">
+                <div className="bg-white rounded-lg p-4 border border-blue-200">
                   <div className="flex items-center justify-between mb-2">
-                    <h4 className="font-semibold text-gray-900">OpenAI API</h4>
-                    <span className="text-xs bg-orange-100 text-orange-700 px-2 py-1 rounded">Pago</span>
+                    <h4 className="font-semibold text-gray-900">Hugging Face API</h4>
+                    <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">Grátis</span>
                   </div>
-                  <p className="text-sm text-gray-600 mb-2">Para insights com IA nos relatórios</p>
+                  <p className="text-sm text-gray-600 mb-2">IA para insights (Llama 2, FLAN-T5)</p>
                   <a 
-                    href="https://platform.openai.com/api-keys" 
+                    href="https://huggingface.co/inference-api" 
                     target="_blank"
                     className="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800"
                   >
                     <ExternalLink className="h-3 w-3" />
-                    Obter API Key
+                    Substitui OpenAI gratuitamente
                   </a>
                 </div>
 
-                <div className="bg-white rounded-lg p-4 border border-orange-200">
+                <div className="bg-white rounded-lg p-4 border border-blue-200">
                   <div className="flex items-center justify-between mb-2">
-                    <h4 className="font-semibold text-gray-900">Booking.com</h4>
-                    <span className="text-xs bg-orange-100 text-orange-700 px-2 py-1 rounded">Partner</span>
+                    <h4 className="font-semibold text-gray-900">IBGE APIs</h4>
+                    <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">Oficial</span>
                   </div>
-                  <p className="text-sm text-gray-600 mb-2">Para dados reais de hospedagem</p>
+                  <p className="text-sm text-gray-600 mb-2">Dados demográficos e geográficos do Brasil</p>
                   <a 
-                    href="https://developers.booking.com/" 
+                    href="https://servicodados.ibge.gov.br/api/docs" 
                     target="_blank"
                     className="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800"
                   >
                     <ExternalLink className="h-3 w-3" />
-                    Programa de Parceiros
+                    Dados oficiais gratuitos
                   </a>
                 </div>
               </div>
@@ -408,37 +451,49 @@ export default function HomePage() {
           {/* Configuration Instructions */}
           <div className="mt-12 bg-gray-900 rounded-xl p-6 text-white">
             <div className="flex items-center gap-3 mb-4">
-              <Key className="h-6 w-6 text-blue-400" />
-              <h3 className="text-xl font-bold">Como Configurar</h3>
+              <Key className="h-6 w-6 text-green-400" />
+              <h3 className="text-xl font-bold">Como Usar (100% Gratuito)</h3>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <h4 className="font-semibold text-blue-400 mb-2">1. Criar arquivo .env</h4>
-                <p className="text-gray-300 text-sm mb-4">
-                  Copie o arquivo <code className="bg-gray-800 px-1 rounded">.env.example</code> para <code className="bg-gray-800 px-1 rounded">.env</code>
-                </p>
-                
-                <h4 className="font-semibold text-blue-400 mb-2">2. Adicionar as chaves</h4>
-                <div className="bg-gray-800 rounded-lg p-3 text-xs font-mono text-gray-300">
-                  <div>GOOGLE_PLACES_API_KEY=sua_chave_aqui</div>
-                  <div>OPENWEATHER_API_KEY=sua_chave_aqui</div>
-                  <div>AIRVISUAL_API_KEY=sua_chave_aqui</div>
-                  <div>OPENAI_API_KEY=sua_chave_aqui</div>
+                <h4 className="font-semibold text-green-400 mb-2">1. Clone e Execute</h4>
+                <div className="bg-gray-800 rounded-lg p-3 text-xs font-mono text-gray-300 mb-4">
+                  <div>git clone [repositorio]</div>
+                  <div>cd LocationIQ-Pro</div>
+                  <div>npm install && npm run dev</div>
                 </div>
+                
+                <h4 className="font-semibold text-green-400 mb-2">2. Funciona Imediatamente</h4>
+                <p className="text-gray-300 text-sm mb-4">
+                  Sem configuração necessária! Mapas, dados mock e análises funcionam imediatamente.
+                </p>
               </div>
               
               <div>
-                <h4 className="font-semibold text-blue-400 mb-2">3. Reiniciar o servidor</h4>
+                <h4 className="font-semibold text-green-400 mb-2">3. APIs Gratuitas (Opcional)</h4>
                 <p className="text-gray-300 text-sm mb-4">
-                  Após adicionar as chaves, reinicie o backend para aplicar as mudanças
+                  Para dados reais, adicione APIs 100% gratuitas no arquivo .env:
                 </p>
                 
-                <h4 className="font-semibold text-blue-400 mb-2">4. Verificar status</h4>
-                <p className="text-gray-300 text-sm">
-                  O dashboard mostra o status de configuração de cada API na seção de configuração
-                </p>
+                <div className="bg-gray-800 rounded-lg p-3 text-xs font-mono text-gray-300">
+                  <div># APIs 100% Gratuitas</div>
+                  <div>WEATHER_API_KEY=sua_chave_gratis</div>
+                  <div>OPENAQ_API_KEY=opcional</div>
+                  <div>HUGGING_FACE_API_KEY=opcional</div>
+                </div>
               </div>
+            </div>
+
+            <div className="mt-6 p-4 bg-green-900/30 rounded-lg border border-green-700">
+              <div className="flex items-center gap-2 mb-2">
+                <CheckCircle className="h-5 w-5 text-green-400" />
+                <span className="font-semibold text-green-400">Garantia Gratuita</span>
+              </div>
+              <p className="text-gray-300 text-sm">
+                Este projeto foi projetado para ser 100% utilizável sem custos. Todas as APIs pagas foram substituídas 
+                por alternativas gratuitas de qualidade equivalente.
+              </p>
             </div>
           </div>
         </div>

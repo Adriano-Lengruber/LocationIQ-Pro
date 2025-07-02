@@ -71,6 +71,76 @@ const cityProfiles = {
     averagePropertyPrice: 5500,
     crimeIndex: 55,
     airQuality: 60
+  },
+  'Fortaleza': {
+    baseScores: { residential: 7.3, hospitality: 8.7, investment: 8.2, environmental: 7.2, security: 6.8, infrastructure: 7.8 },
+    characteristics: ['praia', 'tropical', 'turística', 'nordestina'],
+    averagePropertyPrice: 4800,
+    crimeIndex: 62,
+    airQuality: 75
+  },
+  'Recife': {
+    baseScores: { residential: 7.1, hospitality: 8.4, investment: 7.9, environmental: 6.9, security: 6.5, infrastructure: 7.6 },
+    characteristics: ['histórica', 'praia', 'cultural', 'tecnológica'],
+    averagePropertyPrice: 4200,
+    crimeIndex: 68,
+    airQuality: 70
+  },
+  'Porto Alegre': {
+    baseScores: { residential: 8.1, hospitality: 7.8, investment: 8.1, environmental: 7.8, security: 7.5, infrastructure: 8.3 },
+    characteristics: ['gaúcha', 'cultural', 'universitária', 'européia'],
+    averagePropertyPrice: 5800,
+    crimeIndex: 58,
+    airQuality: 65
+  },
+  'Curitiba': {
+    baseScores: { residential: 8.5, hospitality: 7.9, investment: 8.3, environmental: 8.2, security: 8.0, infrastructure: 9.0 },
+    characteristics: ['planejada', 'ecológica', 'inovadora', 'fria'],
+    averagePropertyPrice: 6200,
+    crimeIndex: 48,
+    airQuality: 78
+  },
+  'Goiânia': {
+    baseScores: { residential: 7.8, hospitality: 7.2, investment: 7.6, environmental: 7.0, security: 7.3, infrastructure: 8.1 },
+    characteristics: ['planejada', 'agronegócio', 'central', 'moderna'],
+    averagePropertyPrice: 4900,
+    crimeIndex: 52,
+    airQuality: 68
+  },
+  'Manaus': {
+    baseScores: { residential: 6.8, hospitality: 8.1, investment: 7.4, environmental: 8.5, security: 6.1, infrastructure: 6.9 },
+    characteristics: ['amazônica', 'industrial', 'exótica', 'úmida'],
+    averagePropertyPrice: 3800,
+    crimeIndex: 71,
+    airQuality: 85
+  },
+  'Natal': {
+    baseScores: { residential: 7.5, hospitality: 9.0, investment: 8.0, environmental: 7.8, security: 6.9, infrastructure: 7.4 },
+    characteristics: ['praia', 'turística', 'dunas', 'tropical'],
+    averagePropertyPrice: 4100,
+    crimeIndex: 64,
+    airQuality: 80
+  },
+  'Florianópolis': {
+    baseScores: { residential: 8.7, hospitality: 9.1, investment: 8.8, environmental: 8.8, security: 8.2, infrastructure: 8.4 },
+    characteristics: ['ilha', 'tecnológica', 'praia', 'qualidade de vida'],
+    averagePropertyPrice: 7200,
+    crimeIndex: 42,
+    airQuality: 82
+  },
+  'Campo Grande': {
+    baseScores: { residential: 7.6, hospitality: 7.3, investment: 7.5, environmental: 7.5, security: 7.1, infrastructure: 7.9 },
+    characteristics: ['pantanal', 'agronegócio', 'central', 'planejada'],
+    averagePropertyPrice: 4600,
+    crimeIndex: 54,
+    airQuality: 72
+  },
+  'João Pessoa': {
+    baseScores: { residential: 7.4, hospitality: 8.6, investment: 7.7, environmental: 7.9, security: 7.0, infrastructure: 7.5 },
+    characteristics: ['praia', 'histórica', 'tranquila', 'tropical'],
+    averagePropertyPrice: 3900,
+    crimeIndex: 59,
+    airQuality: 78
   }
 };
 
