@@ -6,6 +6,17 @@
   height: 100%;
   width: 100%;
   border-radius: 8px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Ensure search dropdown appears above map */
+.leaflet-container .leaflet-map-pane {
+  z-index: 1;
+}
+
+.leaflet-container .leaflet-control-container {
+  z-index: 10;
 }
 
 .leaflet-popup-content-wrapper {

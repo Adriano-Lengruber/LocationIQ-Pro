@@ -357,27 +357,39 @@ export class MockLocationAPI {
     // Simular delay de API
     await new Promise(resolve => setTimeout(resolve, 300 + Math.random() * 500));
     
-    // Mock de resultados baseados na query
+    // Mock de resultados baseados nas cidades disponíveis
     const mockResults: LocationData[] = [
-      {
-        coordinates: { lat: -23.5505, lng: -46.6333 },
-        address: `${query}, São Paulo, SP`,
-        city: 'São Paulo',
-        state: 'São Paulo',
-        country: 'Brasil'
-      },
-      {
-        coordinates: { lat: -22.9068, lng: -43.1729 },
-        address: `${query}, Rio de Janeiro, RJ`,
-        city: 'Rio de Janeiro', 
-        state: 'Rio de Janeiro',
-        country: 'Brasil'
-      }
+      { coordinates: { lat: -23.5505, lng: -46.6333 }, address: `São Paulo, SP`, city: 'São Paulo', state: 'São Paulo', country: 'Brasil' },
+      { coordinates: { lat: -22.9068, lng: -43.1729 }, address: `Rio de Janeiro, RJ`, city: 'Rio de Janeiro', state: 'Rio de Janeiro', country: 'Brasil' },
+      { coordinates: { lat: -15.8267, lng: -47.9218 }, address: `Brasília, DF`, city: 'Brasília', state: 'Distrito Federal', country: 'Brasil' },
+      { coordinates: { lat: -12.9714, lng: -38.5014 }, address: `Salvador, BA`, city: 'Salvador', state: 'Bahia', country: 'Brasil' },
+      { coordinates: { lat: -19.9191, lng: -43.9386 }, address: `Belo Horizonte, MG`, city: 'Belo Horizonte', state: 'Minas Gerais', country: 'Brasil' },
+      { coordinates: { lat: -3.7319, lng: -38.5267 }, address: `Fortaleza, CE`, city: 'Fortaleza', state: 'Ceará', country: 'Brasil' },
+      { coordinates: { lat: -8.0476, lng: -34.8770 }, address: `Recife, PE`, city: 'Recife', state: 'Pernambuco', country: 'Brasil' },
+      { coordinates: { lat: -30.0346, lng: -51.2177 }, address: `Porto Alegre, RS`, city: 'Porto Alegre', state: 'Rio Grande do Sul', country: 'Brasil' },
+      { coordinates: { lat: -25.4284, lng: -49.2733 }, address: `Curitiba, PR`, city: 'Curitiba', state: 'Paraná', country: 'Brasil' },
+      { coordinates: { lat: -16.6869, lng: -49.2648 }, address: `Goiânia, GO`, city: 'Goiânia', state: 'Goiás', country: 'Brasil' },
+      { coordinates: { lat: -3.1190, lng: -60.0217 }, address: `Manaus, AM`, city: 'Manaus', state: 'Amazonas', country: 'Brasil' },
+      { coordinates: { lat: -5.7945, lng: -35.2110 }, address: `Natal, RN`, city: 'Natal', state: 'Rio Grande do Norte', country: 'Brasil' },
+      { coordinates: { lat: -27.5954, lng: -48.5480 }, address: `Florianópolis, SC`, city: 'Florianópolis', state: 'Santa Catarina', country: 'Brasil' },
+      { coordinates: { lat: -20.4697, lng: -54.6201 }, address: `Campo Grande, MS`, city: 'Campo Grande', state: 'Mato Grosso do Sul', country: 'Brasil' },
+      { coordinates: { lat: -7.1195, lng: -34.8450 }, address: `João Pessoa, PB`, city: 'João Pessoa', state: 'Paraíba', country: 'Brasil' }
     ];
 
-    return mockResults.filter(result => 
-      result.address.toLowerCase().includes(query.toLowerCase())
+    // Se a query estiver vazia ou muito curta, retorna cidades principais
+    if (query.length < 2) {
+      return mockResults.slice(0, 10);
+    }
+
+    // Filtrar resultados baseado na query (busca por cidade ou endereço)
+    const filtered = mockResults.filter(result => 
+      result.city?.toLowerCase().includes(query.toLowerCase()) ||
+      result.address.toLowerCase().includes(query.toLowerCase()) ||
+      result.state?.toLowerCase().includes(query.toLowerCase())
     );
+
+    // Se não encontrou resultados específicos, retorna algumas cidades principais
+    return filtered.length > 0 ? filtered : mockResults.slice(0, 5);
   }
 
   static async analyzeLocation(location: LocationData): Promise<LocationAnalysis> {

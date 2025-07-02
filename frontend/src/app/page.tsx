@@ -92,6 +92,15 @@ export default function HomePage() {
                 <p className="text-gray-600">100% open source no GitHub</p>
               </div>
             </div>
+            <div className="text-center mt-6">
+              <Link 
+                href="/api-status"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+              >
+                <CheckCircle className="h-4 w-4" />
+                Ver Status das APIs
+              </Link>
+            </div>
           </div>
 
           <div className="flex justify-center mb-16">

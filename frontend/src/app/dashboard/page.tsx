@@ -1,469 +1,335 @@
 'use client';
 
-import { useState } from 'react';
-import dynamic from 'next/dynamic';
 import Link from 'next/link';
-import LocationSearch from '@/components/LocationSearch';
-import { useLocationStore } from '@/stores/locationStore';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
+  Search, 
+  BarChart3, 
+  MapPin, 
   Home, 
-  Hotel, 
-  TrendingUp, 
-  Leaf, 
   Shield, 
+  Hotel, 
+  Leaf, 
   Store,
-  MapPin,
-  Star,
-  BarChart3,
-  Activity,
   Users,
-  ChartBar,
-  ArrowLeft
+  DollarSign,
+  Activity,
+  ArrowUpRight,
+  ArrowDownRight,
+  Info
 } from 'lucide-react';
 
-// Importações dinâmicas
-const MapComponent = dynamic(() => import('@/components/MapComponent'), {
-  ssr: false,
-  loading: () => (
-    <div className="w-full h-96 bg-gray-100 rounded-lg flex items-center justify-center">
-      <div className="text-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
-        <p className="text-sm text-gray-600">Carregando mapa...</p>
-      </div>
-    </div>
-  )
-});
+import LocationSearch from '@/components/LocationSearch';
+import LeafletMap from '@/components/LeafletMap';
+import ModuleNavigation from '@/components/ModuleNavigation';
+import { useLocationStore } from '@/stores/locationStore';
 
-const RealEstateAnalysis = dynamic(() => import('@/components/RealEstateAnalysis'), { ssr: false });
-const SecurityAnalysis = dynamic(() => import('@/components/SecurityAnalysis'), { ssr: false });
-const InfrastructureAnalysis = dynamic(() => import('@/components/InfrastructureAnalysis'), { ssr: false });
-const { ScoreRadarChart, ScoreBarChart } = require('@/components/ScoreCharts');
+export default function DashboardPage() {
+  const { analysisData, selectedLocation } = useLocationStore();
 
-// Componente para overview dos scores
-function ScoreOverview({ selectedLocation }: { selectedLocation: any }) {
-  const mockScores = {
-    residential: 8.5,
-    hospitality: 7.2,
-    investment: 9.1,
-    environmental: 6.8,
-    security: 7.9,
-    infrastructure: 8.7
-  };
-
-  const scoreData = [
-    { label: 'Residencial', value: mockScores.residential, icon: Home, color: 'bg-blue-500' },
-    { label: 'Hospedagem', value: mockScores.hospitality, icon: Hotel, color: 'bg-purple-500' },
-    { label: 'Investimento', value: mockScores.investment, icon: TrendingUp, color: 'bg-green-500' },
-    { label: 'Ambiental', value: mockScores.environmental, icon: Leaf, color: 'bg-emerald-500' },
-    { label: 'Segurança', value: mockScores.security, icon: Shield, color: 'bg-indigo-500' },
-    { label: 'Infraestrutura', value: mockScores.infrastructure, icon: Store, color: 'bg-orange-500' }
+  const modules = [
+    {
+      id: 'real-estate',
+      name: 'Mercado Imobiliário',
+      href: '/modules/real-estate',
+      icon: Home,
+      color: 'blue',
+      score: analysisData?.modules.residential.score || 8.5,
+      trend: analysisData?.modules.residential.trend || 'up',
+      description: 'Análise de preços, valorização e potencial imobiliário',
+      metrics: [
+        { label: 'Preço Médio/m²', value: 'R$ 8.500', trend: 'up' },
+        { label: 'Valorização 12m', value: '+12.5%', trend: 'up' },
+        { label: 'Liquidez', value: 'Alta', trend: 'stable' }
+      ]
+    },
+    {
+      id: 'security',
+      name: 'Segurança Pública',
+      href: '/modules/security',
+      icon: Shield,
+      color: 'green',
+      score: analysisData?.modules.security.score || 7.2,
+      trend: analysisData?.modules.security.trend || 'up',
+      description: 'Índices de criminalidade e segurança urbana',
+      metrics: [
+        { label: 'Índice Segurança', value: '72/100', trend: 'up' },
+        { label: 'Crimes Violentos', value: 'Baixo', trend: 'down' },
+        { label: 'Policiamento', value: 'Bom', trend: 'stable' }
+      ]
+    },
+    {
+      id: 'infrastructure',
+      name: 'Infraestrutura',
+      href: '/modules/infrastructure',
+      icon: Store,
+      color: 'purple',
+      score: analysisData?.modules.infrastructure.score || 8.8,
+      trend: analysisData?.modules.infrastructure.trend || 'up',
+      description: 'Transporte, comércio e serviços urbanos',
+      metrics: [
+        { label: 'Transporte Público', value: 'Excelente', trend: 'up' },
+        { label: 'Conectividade', value: '95%', trend: 'stable' },
+        { label: 'Serviços', value: 'Completo', trend: 'up' }
+      ]
+    },
+    {
+      id: 'hospitality',
+      name: 'Mercado Hoteleiro',
+      href: '/modules/hospitality',
+      icon: Hotel,
+      color: 'orange',
+      score: analysisData?.modules.hospitality.score || 8.1,
+      trend: analysisData?.modules.hospitality.trend || 'stable',
+      description: 'Turismo, ocupação e preços de hospedagem',
+      metrics: [
+        { label: 'Taxa Ocupação', value: '78%', trend: 'up' },
+        { label: 'Preço Médio', value: 'R$ 280', trend: 'stable' },
+        { label: 'Qualidade', value: '4.2⭐', trend: 'up' }
+      ]
+    },
+    {
+      id: 'environmental',
+      name: 'Qualidade Ambiental',
+      href: '/modules/environmental',
+      icon: Leaf,
+      color: 'emerald',
+      score: analysisData?.modules.environmental.score || 6.8,
+      trend: analysisData?.modules.environmental.trend || 'down',
+      description: 'Qualidade do ar, áreas verdes e sustentabilidade',
+      metrics: [
+        { label: 'Qualidade do Ar', value: 'Moderada', trend: 'down' },
+        { label: 'Áreas Verdes', value: '15m²/hab', trend: 'stable' },
+        { label: 'Sustentabilidade', value: 'Boa', trend: 'up' }
+      ]
+    }
   ];
 
-  const overallScore = scoreData.reduce((acc, score) => acc + score.value, 0) / scoreData.length;
-
   const getScoreColor = (score: number) => {
-    if (score >= 8.5) return 'text-green-600 bg-green-50 border-green-200';
-    if (score >= 7.0) return 'text-yellow-600 bg-yellow-50 border-yellow-200';
+    if (score >= 8) return 'text-green-600 bg-green-50 border-green-200';
+    if (score >= 6) return 'text-yellow-600 bg-yellow-50 border-yellow-200';
     return 'text-red-600 bg-red-50 border-red-200';
   };
 
-  return (
-    <div className="space-y-6">
-      {/* Score Geral */}
-      <Card>
-        <CardHeader className="text-center">
-          <CardTitle className="flex items-center justify-center gap-2">
-            <Star className="h-5 w-5 text-yellow-500" />
-            Score Geral da Localização
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="text-center">
-          <div className="mb-4">
-            <div className="text-4xl font-bold text-blue-600 mb-1">
-              {overallScore.toFixed(1)}
-            </div>
-            <div className="text-sm text-gray-500">de 10.0</div>
-          </div>
-          <div className="w-full bg-gray-200 rounded-full h-3 mb-4">
-            <div 
-              className="bg-gradient-to-r from-blue-500 to-green-500 h-3 rounded-full transition-all duration-500"
-              style={{ width: `${(overallScore / 10) * 100}%` }}
-            ></div>
-          </div>
-          <Badge className={getScoreColor(overallScore)}>
-            {overallScore >= 8.5 ? 'Excelente Localização' : 
-             overallScore >= 7.0 ? 'Boa Localização' : 
-             'Localização com Potencial'}
-          </Badge>
-        </CardContent>
-      </Card>
+  const getTrendIcon = (trend: string) => {
+    switch (trend) {
+      case 'up':
+        return <ArrowUpRight className="h-4 w-4 text-green-500" />;
+      case 'down':
+        return <ArrowDownRight className="h-4 w-4 text-red-500" />;
+      default:
+        return <Activity className="h-4 w-4 text-gray-500" />;
+    }
+  };
 
-      {/* Scores por Módulo */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Análise por Módulo</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 gap-4">
-            {scoreData.map((item) => {
-              const Icon = item.icon;
-              return (
-                <div key={item.label} className="flex items-center justify-between p-3 border rounded-lg">
-                  <div className="flex items-center gap-2">
-                    <div className={`p-2 rounded-lg ${item.color} text-white`}>
-                      <Icon className="h-4 w-4" />
-                    </div>
-                    <span className="text-sm font-medium">{item.label}</span>
-                  </div>
-                  <Badge className={getScoreColor(item.value)}>
-                    {item.value.toFixed(1)}
-                  </Badge>
-                </div>
-              );
-            })}
-          </div>
-        </CardContent>
-      </Card>
-    </div>
-  );
-}
-
-export default function DashboardEnhancedPage() {
-  const { selectedLocation, isAnalyzing } = useLocationStore();
-  const [activeTab, setActiveTab] = useState('overview');
-
-  // Dados dos scores para gráficos
-  const scoreData = [
-    { label: 'Residencial', value: 8.5, icon: Home, color: 'bg-blue-500' },
-    { label: 'Hospedagem', value: 7.2, icon: Hotel, color: 'bg-purple-500' },
-    { label: 'Investimento', value: 9.1, icon: TrendingUp, color: 'bg-green-500' },
-    { label: 'Ambiental', value: 6.8, icon: Leaf, color: 'bg-emerald-500' },
-    { label: 'Segurança', value: 7.9, icon: Shield, color: 'bg-indigo-500' },
-    { label: 'Infraestrutura', value: 8.7, icon: Store, color: 'bg-orange-500' }
-  ];
+  const overallScore = analysisData ? 
+    (analysisData.modules.residential.score + 
+     analysisData.modules.security.score + 
+     analysisData.modules.infrastructure.score + 
+     analysisData.modules.hospitality.score + 
+     analysisData.modules.environmental.score) / 5 
+    : 7.8;
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2">
-                <MapPin className="h-8 w-8 text-blue-600" />
-                <h1 className="text-xl font-bold text-gray-900">LocationIQ Pro</h1>
-              </div>
-              <Badge variant="outline" className="text-xs">Enhanced</Badge>
-            </div>
-            
-            <div className="flex-1 max-w-2xl mx-8">
-              <LocationSearch />
+      {/* Navigation */}
+      <ModuleNavigation />
+
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Header */}
+        <div className="mb-8">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">
+                Dashboard Overview
+              </h1>
+              <p className="text-gray-600 mt-1">
+                Visão geral dos indicadores de localização
+                {selectedLocation && (
+                  <span className="font-medium text-blue-600 ml-2">
+                    • {selectedLocation.city}
+                  </span>
+                )}
+              </p>
             </div>
             
             <div className="flex items-center gap-4">
-              <div className="text-right">
-                <p className="text-sm text-gray-500">Análise Inteligente</p>
-                <p className="text-xs text-gray-400">de Localização</p>
+              {/* Score Geral */}
+              <div className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+                <div className="flex items-center gap-3">
+                  <div className={`w-12 h-12 rounded-full border-2 flex items-center justify-center font-bold text-lg ${getScoreColor(overallScore)}`}>
+                    {overallScore.toFixed(1)}
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-600">Score Geral</p>
+                    <p className="text-xs text-gray-500">Baseado em 5 módulos</p>
+                  </div>
+                </div>
               </div>
-              
-              <Link 
-                href="/dashboard"
-                className="flex items-center gap-2 px-3 py-2 bg-gray-600 text-white text-sm rounded-lg hover:bg-gray-700 transition-colors"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                <span>Dashboard Simples</span>
-              </Link>
             </div>
           </div>
         </div>
-      </header>
 
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-          
-          {/* Mapa */}
-          <div className="xl:col-span-2">
-            <Card>
-              <CardContent className="p-0">
-                <MapComponent className="h-96 xl:h-[600px]" />
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Painel de Análise */}
-          <div className="space-y-6">
-            {selectedLocation ? (
-              <>
-                {/* Informações da Localização */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <MapPin className="h-5 w-5" />
-                      Localização Selecionada
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-2">
-                      <p className="font-medium text-sm">{selectedLocation.address}</p>
-                      {selectedLocation.city && selectedLocation.state && (
-                        <p className="text-xs text-gray-500">
-                          {selectedLocation.city}, {selectedLocation.state}
-                        </p>
-                      )}
-                      <p className="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded">
-                        {selectedLocation.coordinates.lat.toFixed(4)}, {selectedLocation.coordinates.lng.toFixed(4)}
-                      </p>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* Overview dos Scores */}
-                <ScoreOverview selectedLocation={selectedLocation} />
-              </>
-            ) : (
-              <Card>
-                <CardContent className="text-center py-12">
-                  <MapPin className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-                  <h3 className="font-medium text-gray-900 mb-2">
-                    Selecione uma localização
-                  </h3>
-                  <p className="text-sm text-gray-500 mb-4">
-                    Use a busca acima para encontrar e analisar qualquer endereço
-                  </p>
-                  <Badge variant="outline" className="text-xs">
-                    6 módulos de análise disponíveis
-                  </Badge>
-                </CardContent>
-              </Card>
-            )}
+        {/* Search Section */}
+        <div className="mb-8 relative z-[101]">
+          <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <Search className="h-5 w-5 text-blue-600" />
+              <h2 className="text-lg font-semibold text-gray-900">
+                Buscar Localização
+              </h2>
+            </div>
+            <LocationSearch />
+            <p className="text-sm text-gray-500 mt-3">
+              Pesquise por qualquer endereço, bairro ou cidade brasileira para começar a análise
+            </p>
           </div>
         </div>
 
-        {/* Análises Detalhadas em Abas */}
-        {selectedLocation && (
-          <div className="mt-8">
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-6 bg-white border border-gray-200">
-                <TabsTrigger value="overview" className="flex items-center gap-2">
-                  <BarChart3 className="h-4 w-4" />
-                  <span className="hidden sm:inline">Overview</span>
-                </TabsTrigger>
-                <TabsTrigger value="real-estate" className="flex items-center gap-2">
-                  <Home className="h-4 w-4" />
-                  <span className="hidden sm:inline">Imobiliário</span>
-                </TabsTrigger>
-                <TabsTrigger value="security" className="flex items-center gap-2">
-                  <Shield className="h-4 w-4" />
-                  <span className="hidden sm:inline">Segurança</span>
-                </TabsTrigger>
-                <TabsTrigger value="infrastructure" className="flex items-center gap-2">
-                  <Store className="h-4 w-4" />
-                  <span className="hidden sm:inline">Infraestrutura</span>
-                </TabsTrigger>
-                <TabsTrigger value="hospitality" className="flex items-center gap-2">
-                  <Hotel className="h-4 w-4" />
-                  <span className="hidden sm:inline">Hospedagem</span>
-                </TabsTrigger>
-                <TabsTrigger value="environmental" className="flex items-center gap-2">
-                  <Leaf className="h-4 w-4" />
-                  <span className="hidden sm:inline">Ambiental</span>
-                </TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="overview" className="mt-6">
-                <div className="space-y-6">
-                  {/* Gráficos de Score */}
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <Card>
-                      <CardHeader>
-                        <CardTitle className="text-sm">Análise Radar - Scores por Módulo</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <ScoreRadarChart scores={scoreData.map(item => ({
-                          label: item.label,
-                          value: item.value,
-                          color: item.color
-                        }))} />
-                      </CardContent>
-                    </Card>
-
-                    <Card>
-                      <CardHeader>
-                        <CardTitle className="text-sm">Comparativo de Scores</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <ScoreBarChart scores={scoreData.map(item => ({
-                          label: item.label,
-                          value: item.value,
-                          color: item.color
-                        }))} />
-                      </CardContent>
-                    </Card>
-                  </div>
-
-                  {/* Insights */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <Card>
-                      <CardHeader className="pb-3">
-                        <CardTitle className="text-sm">Pontos Fortes</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <ul className="space-y-2">
-                          <li className="flex items-center gap-2 text-sm">
-                            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                            Alta infraestrutura urbana
-                          </li>
-                          <li className="flex items-center gap-2 text-sm">
-                            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                            Excelente potencial de investimento
-                          </li>
-                          <li className="flex items-center gap-2 text-sm">
-                            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                            Boa qualidade residencial
-                          </li>
-                        </ul>
-                      </CardContent>
-                    </Card>
-
-                    <Card>
-                      <CardHeader className="pb-3">
-                        <CardTitle className="text-sm">Pontos de Atenção</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <ul className="space-y-2">
-                          <li className="flex items-center gap-2 text-sm">
-                            <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
-                            Qualidade ambiental moderada
-                          </li>
-                          <li className="flex items-center gap-2 text-sm">
-                            <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
-                            Potencial turístico em desenvolvimento
-                          </li>
-                        </ul>
-                      </CardContent>
-                    </Card>
-
-                    <Card>
-                      <CardHeader className="pb-3">
-                        <CardTitle className="text-sm">Recomendações</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <ul className="space-y-2">
-                          <li className="flex items-center gap-2 text-sm">
-                            <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                            Ideal para moradia
-                          </li>
-                          <li className="flex items-center gap-2 text-sm">
-                            <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                            Ótimo para investimento
-                          </li>
-                          <li className="flex items-center gap-2 text-sm">
-                            <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                            Monitorar desenvolvimento ambiental
-                          </li>
-                        </ul>
-                      </CardContent>
-                    </Card>
-                  </div>
-                </div>
-              </TabsContent>
-
-              <TabsContent value="real-estate" className="mt-6">
-                <RealEstateAnalysis 
-                  latitude={selectedLocation.coordinates.lat}
-                  longitude={selectedLocation.coordinates.lng}
-                />
-              </TabsContent>
-
-              <TabsContent value="security" className="mt-6">
-                <SecurityAnalysis 
-                  latitude={selectedLocation.coordinates.lat}
-                  longitude={selectedLocation.coordinates.lng}
-                />
-              </TabsContent>
-
-              <TabsContent value="infrastructure" className="mt-6">
-                <InfrastructureAnalysis 
-                  latitude={selectedLocation.coordinates.lat}
-                  longitude={selectedLocation.coordinates.lng}
-                />
-              </TabsContent>
-
-              <TabsContent value="hospitality" className="mt-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Hotel className="h-5 w-5" />
-                      Análise de Hospedagem
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-center py-8">
-                      <Hotel className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-                      <p className="text-gray-500">Módulo em desenvolvimento</p>
-                      <p className="text-sm text-gray-400">Análise de hotéis e turismo</p>
-                    </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-
-              <TabsContent value="environmental" className="mt-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Leaf className="h-5 w-5" />
-                      Análise Ambiental
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-center py-8">
-                      <Leaf className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-                      <p className="text-gray-500">Módulo em desenvolvimento</p>
-                      <p className="text-sm text-gray-400">Qualidade do ar e clima</p>
-                    </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-            </Tabs>
+        {/* Map and Analysis Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8 relative z-10">
+          {/* Map */}
+          <div className="lg:col-span-2">
+            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <MapPin className="h-5 w-5 text-blue-600" />
+                <h2 className="text-lg font-semibold text-gray-900">
+                  Mapa Interativo
+                </h2>
+              </div>
+              <div className="h-96 rounded-lg overflow-hidden border border-gray-200">
+                <LeafletMap selectedLocation={selectedLocation} />
+              </div>
+            </div>
           </div>
-        )}
 
-        {/* Informações do MVP se não há localização selecionada */}
-        {!selectedLocation && (
-          <div className="mt-8">
-            <Card>
-              <CardHeader>
-                <CardTitle>🚀 LocationIQ Pro - Dashboard Enhanced</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className="text-center">
-                    <ChartBar className="h-8 w-8 text-blue-600 mx-auto mb-2" />
-                    <h4 className="font-medium mb-1">Análise Integrada</h4>
-                    <p className="text-sm text-gray-500">Dashboard com abas organizadas para cada módulo</p>
+          {/* Quick Stats */}
+          <div className="space-y-4">
+            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                Estatísticas Rápidas
+              </h3>
+              
+              <div className="space-y-4">
+                <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <Users className="h-5 w-5 text-blue-600" />
+                    <span className="text-sm font-medium text-gray-700">População</span>
+                  </div>
+                  <span className="text-sm font-bold text-blue-600">12.3M</span>
+                </div>
+
+                <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <DollarSign className="h-5 w-5 text-green-600" />
+                    <span className="text-sm font-medium text-gray-700">PIB per capita</span>
+                  </div>
+                  <span className="text-sm font-bold text-green-600">R$ 65k</span>
+                </div>
+
+                <div className="flex items-center justify-between p-3 bg-purple-50 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <Activity className="h-5 w-5 text-purple-600" />
+                    <span className="text-sm font-medium text-gray-700">IDH</span>
+                  </div>
+                  <span className="text-sm font-bold text-purple-600">0.825</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl border border-blue-200 p-6">
+              <div className="flex items-center gap-2 mb-3">
+                <Info className="h-5 w-5 text-blue-600" />
+                <h3 className="text-sm font-semibold text-blue-900">
+                  100% Gratuito
+                </h3>
+              </div>
+              <p className="text-xs text-blue-700 leading-relaxed">
+                Todos os dados são obtidos através de APIs públicas e fontes abertas. 
+                Nenhuma cobrança por uso.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Modules Grid */}
+        <div className="mb-8">
+          <div className="flex items-center gap-3 mb-6">
+            <BarChart3 className="h-6 w-6 text-gray-700" />
+            <h2 className="text-xl font-bold text-gray-900">
+              Módulos de Análise
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+            {modules.map((module) => {
+              const IconComponent = module.icon;
+              
+              return (
+                <Link
+                  key={module.id}
+                  href={module.href}
+                  className="group bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md hover:border-gray-300 transition-all duration-200 p-6"
+                >
+                  <div className="flex items-start justify-between mb-4">
+                    <div className={`w-12 h-12 rounded-xl bg-${module.color}-100 flex items-center justify-center group-hover:scale-110 transition-transform duration-200`}>
+                      <IconComponent className={`h-6 w-6 text-${module.color}-600`} />
+                    </div>
+                    
+                    <div className="flex items-center gap-2">
+                      <div className={`px-3 py-1 rounded-full text-sm font-medium border ${getScoreColor(module.score)}`}>
+                        {module.score.toFixed(1)}
+                      </div>
+                      {getTrendIcon(module.trend)}
+                    </div>
                   </div>
                   
-                  <div className="text-center">
-                    <Activity className="h-8 w-8 text-green-600 mx-auto mb-2" />
-                    <h4 className="font-medium mb-1">Scores Dinâmicos</h4>
-                    <p className="text-sm text-gray-500">Visualização aprimorada dos indicadores</p>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
+                    {module.name}
+                  </h3>
+                  
+                  <p className="text-sm text-gray-600 mb-4 line-clamp-2">
+                    {module.description}
+                  </p>
+                  
+                  <div className="space-y-2">
+                    {module.metrics.map((metric, index) => (
+                      <div key={index} className="flex items-center justify-between text-xs">
+                        <span className="text-gray-600">{metric.label}</span>
+                        <div className="flex items-center gap-1">
+                          <span className="font-medium text-gray-900">{metric.value}</span>
+                          {getTrendIcon(metric.trend)}
+                        </div>
+                      </div>
+                    ))}
                   </div>
                   
-                  <div className="text-center">
-                    <Users className="h-8 w-8 text-purple-600 mx-auto mb-2" />
-                    <h4 className="font-medium mb-1">Insights Inteligentes</h4>
-                    <p className="text-sm text-gray-500">Recomendações personalizadas por localização</p>
+                  <div className="mt-4 pt-4 border-t border-gray-100">
+                    <div className="flex items-center text-sm text-blue-600 group-hover:text-blue-700 font-medium">
+                      <span>Ver análise completa</span>
+                      <ArrowUpRight className="h-4 w-4 ml-1 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform duration-200" />
+                    </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
+                </Link>
+              );
+            })}
           </div>
-        )}
-      </main>
+        </div>
+
+        {/* Footer Info */}
+        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+          <div className="text-center">
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              Plataforma de Análise Gratuita
+            </h3>
+            <p className="text-sm text-gray-600 max-w-2xl mx-auto">
+              LocationIQ Pro utiliza exclusivamente dados públicos e APIs gratuitas para fornecer 
+              análises completas sobre localização urbana. Projeto open source para demonstração 
+              de capacidades em Data Science.
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

@@ -24,13 +24,23 @@ export default function LocationSearch() {
 
   // Debounce da busca
   useEffect(() => {
-    if (searchQuery.length >= 3) {
+    if (searchQuery.length >= 2) {
       const timeoutId = setTimeout(() => {
         searchLocations(searchQuery);
       }, 300);
       return () => clearTimeout(timeoutId);
+    } else if (searchQuery.length === 0 && isOpen) {
+      // Mostrar cidades principais quando vazio
+      searchLocations('');
     }
-  }, [searchQuery, searchLocations]);
+  }, [searchQuery, searchLocations, isOpen]);
+
+  // Carregar cidades principais ao abrir
+  useEffect(() => {
+    if (isOpen && searchResults.length === 0 && !isSearching) {
+      searchLocations('');
+    }
+  }, [isOpen, searchResults.length, isSearching, searchLocations]);
 
   // Fechar dropdown ao clicar fora
   useEffect(() => {
@@ -63,7 +73,7 @@ export default function LocationSearch() {
   };
 
   return (
-    <div ref={searchRef} className="relative w-full max-w-2xl mx-auto">
+    <div ref={searchRef} className="relative w-full max-w-2xl mx-auto z-[1000]">
       <div className="relative">
         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
           <Search className="h-5 w-5 text-gray-400" />
@@ -77,11 +87,16 @@ export default function LocationSearch() {
             setSearchQuery(e.target.value);
             setIsOpen(true);
           }}
-          onFocus={() => setIsOpen(true)}
+          onFocus={() => {
+            setIsOpen(true);
+            if (searchQuery.length === 0) {
+              searchLocations('');
+            }
+          }}
           className="block w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg 
                      focus:ring-2 focus:ring-blue-500 focus:border-blue-500 
                      placeholder-gray-500 text-sm bg-white shadow-sm"
-          placeholder="Busque por endereço, bairro ou cidade..."
+          placeholder="Clique aqui para ver todas as cidades disponíveis..."
         />
         
         <div className="absolute inset-y-0 right-0 flex items-center">
@@ -103,18 +118,25 @@ export default function LocationSearch() {
 
       {/* Dropdown de resultados */}
       {isOpen && (searchResults.length > 0 || isSearching) && (
-        <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 
-                        rounded-lg shadow-lg max-h-60 overflow-auto">
-          {isSearching && searchQuery.length >= 3 && (
+        <div className="search-dropdown absolute z-[999999] w-full mt-1 bg-white border border-gray-200 
+                        rounded-lg shadow-2xl max-h-60 overflow-auto"
+             style={{ position: 'absolute', zIndex: 999999 }}>
+          {isSearching && (
             <div className="px-4 py-3 text-sm text-gray-500 flex items-center">
               <Loader2 className="h-4 w-4 animate-spin mr-2" />
               Buscando...
             </div>
           )}
           
-          {!isSearching && searchResults.length === 0 && searchQuery.length >= 3 && (
+          {!isSearching && searchResults.length === 0 && searchQuery.length >= 2 && (
             <div className="px-4 py-3 text-sm text-gray-500">
-              Nenhum resultado encontrado
+              Nenhum resultado encontrado para &quot;{searchQuery}&quot;
+            </div>
+          )}
+          
+          {!isSearching && searchResults.length === 0 && searchQuery.length < 2 && (
+            <div className="px-4 py-3 text-sm text-gray-500">
+              Digite pelo menos 2 caracteres para buscar
             </div>
           )}
           
