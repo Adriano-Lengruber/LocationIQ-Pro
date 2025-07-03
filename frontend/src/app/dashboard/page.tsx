@@ -21,6 +21,7 @@ import {
 import LocationSearch from '@/components/LocationSearch';
 import LeafletMap from '@/components/LeafletMap';
 import ModuleNavigation from '@/components/ModuleNavigation';
+import IBGETestComponent from '@/components/IBGETestComponent';
 import { useLocationStore } from '@/stores/locationStore';
 
 export default function DashboardPage() {
@@ -183,6 +184,24 @@ export default function DashboardPage() {
             <p className="text-sm text-gray-500 mt-3">
               Pesquise por qualquer endereço, bairro ou cidade brasileira para começar a análise
             </p>
+          </div>
+        </div>
+
+        {/* Municipal Data Section */}
+        <div className="mb-8">
+          <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
+            <div className="border-b border-gray-200 p-6">
+              <div className="flex items-center gap-3">
+                <BarChart3 className="h-5 w-5 text-green-600" />
+                <h2 className="text-lg font-semibold text-gray-900">
+                  Dados Municipais IBGE
+                </h2>
+              </div>
+              <p className="text-sm text-gray-500 mt-1">
+                Informações oficiais sobre população, área territorial e densidade demográfica
+              </p>
+            </div>
+            <IBGETestComponent />
           </div>
         </div>
 

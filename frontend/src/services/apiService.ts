@@ -367,3 +367,279 @@ export async function checkAPIHealth(): Promise<Record<string, boolean>> {
 
   return health;
 }
+
+// Interfaces para dados IBGE
+export interface IBGEMunicipalityInfo {
+  id: number;
+  nome: string;
+  microrregiao: string;
+  mesorregiao: string | null;
+  uf: {
+    id: number | null;
+    sigla: string | null;
+    nome: string | null;
+  };
+  regiao: {
+    id: number | null;
+    sigla: string | null;
+    nome: string | null;
+  };
+  regiao_imediata: {
+    id: number;
+    nome: string;
+  };
+  regiao_intermediaria: {
+    id: number | null;
+    nome: string | null;
+  };
+}
+
+export interface IBGEPopulationData {
+  municipality_id: number;
+  municipality_name: string;
+  population: number;
+  year: number;
+  unit: string;
+  source: string;
+  _cached_at?: string;
+  _cache_ttl?: number;
+}
+
+export interface IBGEAreaData {
+  municipality_id: number;
+  municipality_name: string;
+  area_km2: number;
+  year: number;
+  unit: string;
+  source: string;
+  _cached_at?: string;
+  _cache_ttl?: number;
+}
+
+export interface IBGEDensityData {
+  municipality_id: number;
+  municipality_name: string;
+  density: number;
+  year: number;
+  unit: string;
+  source: string;
+  _cached_at?: string;
+  _cache_ttl?: number;
+}
+
+export interface IBGECompleteData {
+  municipality_id: number;
+  basic_info: IBGEMunicipalityInfo | null;
+  population: IBGEPopulationData | null;
+  area: IBGEAreaData | null;
+  density: IBGEDensityData | null;
+  economic_indicators: {
+    municipality_id: number;
+    indicators: Record<string, any>;
+    available_indicators: string[];
+    note: string;
+  };
+  last_updated: string;
+  data_sources: string[];
+  coordinates?: {
+    latitude: number;
+    longitude: number;
+    mapbox_center: {
+      lat: number;
+      lng: number;
+      zoom: number;
+    };
+  };
+}
+
+export interface IBGESearchResult {
+  id: number;
+  nome: string;
+  uf: string;
+  microrregiao: string;
+  mesorregiao: string;
+}
+
+/**
+ * Serviço IBGE Backend - Conecta com nosso backend LocationIQ Pro
+ */
+export class IBGEBackendService {
+  private static readonly BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001/api/v1';
+
+  /**
+   * Obtém dados completos do município padrão (Itaperuna)
+   */
+  static async getDefaultMunicipality(): Promise<IBGECompleteData | null> {
+    try {
+      const response = await fetch(`${this.BASE_URL}/ibge/municipality/default`);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+      
+      const data = await response.json();
+      console.log('✅ Dados do município padrão obtidos do backend');
+      return data;
+    } catch (error) {
+      console.error('Erro ao buscar município padrão:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Obtém dados de população de um município
+   */
+  static async getPopulation(municipalityId: number): Promise<IBGEPopulationData | null> {
+    try {
+      const response = await fetch(`${this.BASE_URL}/ibge/population/${municipalityId}`);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+      
+      const data = await response.json();
+      console.log(`✅ Dados de população obtidos para município ${municipalityId}`);
+      return data;
+    } catch (error) {
+      console.error('Erro ao buscar população:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Obtém dados de área territorial de um município
+   */
+  static async getArea(municipalityId: number): Promise<IBGEAreaData | null> {
+    try {
+      const response = await fetch(`${this.BASE_URL}/ibge/area/${municipalityId}`);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+      
+      const data = await response.json();
+      console.log(`✅ Dados de área obtidos para município ${municipalityId}`);
+      return data;
+    } catch (error) {
+      console.error('Erro ao buscar área:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Obtém dados de densidade demográfica de um município
+   */
+  static async getDensity(municipalityId: number): Promise<IBGEDensityData | null> {
+    try {
+      const response = await fetch(`${this.BASE_URL}/ibge/density/${municipalityId}`);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+      
+      const data = await response.json();
+      console.log(`✅ Dados de densidade obtidos para município ${municipalityId}`);
+      return data;
+    } catch (error) {
+      console.error('Erro ao buscar densidade:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Obtém informações básicas de um município
+   */
+  static async getMunicipalityInfo(municipalityId: number): Promise<IBGEMunicipalityInfo | null> {
+    try {
+      const response = await fetch(`${this.BASE_URL}/ibge/municipality/${municipalityId}`);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+      
+      const data = await response.json();
+      console.log(`✅ Informações básicas obtidas para município ${municipalityId}`);
+      return data;
+    } catch (error) {
+      console.error('Erro ao buscar informações do município:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Busca municípios por nome
+   */
+  static async searchMunicipalities(name: string, uf?: string): Promise<IBGESearchResult[] | null> {
+    try {
+      const params = new URLSearchParams({ name });
+      if (uf) params.append('uf', uf);
+      
+      const response = await fetch(`${this.BASE_URL}/ibge/search?${params.toString()}`);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+      
+      const data = await response.json();
+      console.log(`✅ Busca de municípios realizada: ${data.length} resultados`);
+      return data;
+    } catch (error) {
+      console.error('Erro ao buscar municípios:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Obtém dados completos de um município específico
+   */
+  static async getCompleteMunicipalityData(municipalityId: number): Promise<IBGECompleteData | null> {
+    try {
+      const response = await fetch(`${this.BASE_URL}/ibge/municipality/${municipalityId}/complete`);
+      
+      if (!response.ok) {
+        // Se não tiver endpoint /complete, monta os dados fazendo múltiplas chamadas
+        return await this.buildCompleteData(municipalityId);
+      }
+      
+      const data = await response.json();
+      console.log(`✅ Dados completos obtidos para município ${municipalityId}`);
+      return data;
+    } catch (error) {
+      console.error('Erro ao buscar dados completos:', error);
+      return await this.buildCompleteData(municipalityId);
+    }
+  }
+
+  /**
+   * Constrói dados completos fazendo múltiplas chamadas
+   */
+  private static async buildCompleteData(municipalityId: number): Promise<IBGECompleteData | null> {
+    try {
+      const [basicInfo, population, area, density] = await Promise.all([
+        this.getMunicipalityInfo(municipalityId),
+        this.getPopulation(municipalityId),
+        this.getArea(municipalityId),
+        this.getDensity(municipalityId)
+      ]);
+
+      return {
+        municipality_id: municipalityId,
+        basic_info: basicInfo,
+        population,
+        area,
+        density,
+        economic_indicators: {
+          municipality_id: municipalityId,
+          indicators: {},
+          available_indicators: [],
+          note: "Dados obtidos via múltiplas chamadas"
+        },
+        last_updated: new Date().toISOString().split('T')[0],
+        data_sources: ["LocationIQ Pro Backend", "IBGE APIs"]
+      };
+    } catch (error) {
+      console.error('Erro ao construir dados completos:', error);
+      return null;
+    }
+  }
+}
