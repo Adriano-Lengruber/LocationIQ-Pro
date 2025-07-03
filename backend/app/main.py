@@ -23,6 +23,10 @@ async def lifespan(app: FastAPI):
     print(f"📊 Environment: {settings.ENVIRONMENT}")
     print(f"🔧 Debug Mode: {settings.DEBUG}")
     
+    # Initialize cache service
+    from app.services.cache_service import cache_service
+    await cache_service.initialize()
+    
     # Initialize and log API configuration status
     from app.services.api_config import get_api_service
     api_service = get_api_service()
@@ -32,6 +36,7 @@ async def lifespan(app: FastAPI):
     
     # Shutdown
     print("🛑 LocationIQ Pro API Shutting down...")
+    await cache_service.close()
 
 
 # Create FastAPI application
