@@ -27,8 +27,12 @@ import LocationSearch from '@/components/LocationSearch';
 import LeafletMap from '@/components/LeafletMap';
 import ModuleNavigation from '@/components/ModuleNavigation';
 import { useLocationStore } from '@/stores/locationStore';
+import { useLocationSync } from '@/hooks/useLocationSync';
 
 export default function InfrastructurePage() {
+  // Ativar sincronização de localização
+  useLocationSync();
+  
   const { analysisData, selectedLocation, currentLocation, mapCenter } = useLocationStore();
   
   const infrastructureData = analysisData?.modules.infrastructure;

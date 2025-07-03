@@ -80,43 +80,57 @@ export default function LeafletMap({ selectedLocation, mapCenter }: LeafletMapPr
 
   // Atualizar mapa quando localização ou centro mudar
   useEffect(() => {
+    console.log('🗺️ useEffect triggered - mapCenter:', mapCenter, 'selectedLocation:', selectedLocation);
+    
     if (mapInstanceRef.current) {
       let newCenter: [number, number] | null = null;
       
       // Prioridade: mapCenter > selectedLocation
       if (mapCenter) {
         newCenter = mapCenter;
+        console.log('🗺️ Usando mapCenter:', mapCenter);
       } else if (selectedLocation) {
         newCenter = [selectedLocation.coordinates.lat, selectedLocation.coordinates.lng];
+        console.log('🗺️ Usando selectedLocation:', newCenter);
       }
       
       if (newCenter) {
         console.log('🗺️ Atualizando centro do mapa para:', newCenter);
         mapInstanceRef.current.setView(newCenter, 13);
 
-        // Limpar marcadores existentes (importar L novamente)
-        const L = require('leaflet');
-        mapInstanceRef.current.eachLayer((layer: any) => {
-          if (layer instanceof L.Marker) {
-            mapInstanceRef.current.removeLayer(layer);
-          }
-        });
-
-        // Adicionar novo marcador se há localização
-        if (selectedLocation) {
-          const marker = L.marker([selectedLocation.coordinates.lat, selectedLocation.coordinates.lng])
-            .addTo(mapInstanceRef.current);
+        // Importar Leaflet dinamicamente para evitar problemas SSR
+        import('leaflet').then((L) => {
+          const Leaflet = L.default;
           
-          if (selectedLocation.address) {
-            marker.bindPopup(`<b>${selectedLocation.address}</b>`);
+          // Limpar marcadores existentes
+          mapInstanceRef.current.eachLayer((layer: any) => {
+            if (layer instanceof Leaflet.Marker) {
+              mapInstanceRef.current.removeLayer(layer);
+            }
+          });
+
+          // Adicionar novo marcador se há localização
+          if (selectedLocation) {
+            const marker = Leaflet.marker([selectedLocation.coordinates.lat, selectedLocation.coordinates.lng])
+              .addTo(mapInstanceRef.current);
+            
+            if (selectedLocation.address) {
+              marker.bindPopup(`<b>${selectedLocation.address}</b>`);
+            }
+          } else if (mapCenter) {
+            // Adicionar marcador genérico para centro do mapa
+            const marker = Leaflet.marker(mapCenter)
+              .addTo(mapInstanceRef.current);
+            marker.bindPopup(`<b>Localização Atual</b>`);
           }
-        } else if (mapCenter) {
-          // Adicionar marcador genérico para centro do mapa
-          const marker = L.marker(mapCenter)
-            .addTo(mapInstanceRef.current);
-          marker.bindPopup(`<b>Localização Atual</b>`);
-        }
+        }).catch(error => {
+          console.error('Erro ao importar Leaflet:', error);
+        });
+      } else {
+        console.log('🗺️ Nenhum centro definido');
       }
+    } else {
+      console.log('🗺️ Mapa ainda não inicializado');
     }
   }, [selectedLocation, mapCenter]);
 

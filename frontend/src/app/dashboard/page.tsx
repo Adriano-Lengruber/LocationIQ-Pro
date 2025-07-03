@@ -27,8 +27,12 @@ import ModuleNavigation from '@/components/ModuleNavigation';
 import LocationHeader from '@/components/LocationHeader';
 import MunicipalData from '@/components/MunicipalData';
 import { useLocationStore } from '@/stores/locationStore';
+import { useLocationSync } from '@/hooks/useLocationSync';
 
 export default function DashboardPage() {
+  // Ativar sincronização de localização
+  useLocationSync();
+  
   const { analysisData, selectedLocation, currentLocation, mapCenter } = useLocationStore();
 
   const modules = [
