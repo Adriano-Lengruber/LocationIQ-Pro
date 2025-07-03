@@ -43,6 +43,22 @@ class Settings(BaseSettings):
     MAPBOX_ACCESS_TOKEN: Optional[str] = None
     OPENWEATHER_API_KEY: Optional[str] = None
     
+    # IBGE APIs (Públicas)
+    IBGE_BASE_URL: str = "https://servicodados.ibge.gov.br/api/v1"
+    IBGE_LOCALIDADES_URL: str = "https://servicodados.ibge.gov.br/api/v1/localidades"
+    IBGE_INDICADORES_URL: str = "https://servicodados.ibge.gov.br/api/v3/agregados"
+    
+    # Localização padrão (Itaperuna, RJ)
+    DEFAULT_CITY_NAME: str = "Itaperuna"
+    DEFAULT_STATE: str = "RJ"
+    DEFAULT_COUNTRY: str = "Brasil"
+    DEFAULT_LATITUDE: float = -21.2061
+    DEFAULT_LONGITUDE: float = -41.8881
+    DEFAULT_MUNICIPALITY_ID: int = 3302205  # Código IBGE de Itaperuna
+    MAPBOX_CENTER_LAT: float = -21.2061
+    MAPBOX_CENTER_LNG: float = -41.8881
+    MAPBOX_ZOOM: int = 12
+    
     # External APIs - Enhanced Services
     AIRVISUAL_API_KEY: Optional[str] = None
     RENTSPREE_API_KEY: Optional[str] = None

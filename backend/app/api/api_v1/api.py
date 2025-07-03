@@ -13,7 +13,9 @@ from app.api.api_v1.endpoints import (
     environmental,
     security,
     infrastructure,
-    analysis
+    analysis,
+    ibge,
+    admin
 )
 from app.api.v1 import config
 
@@ -66,4 +68,16 @@ api_router.include_router(
     analysis.router,
     prefix="/analysis",
     tags=["analysis"]
+)
+
+api_router.include_router(
+    ibge.router,
+    prefix="/ibge",
+    tags=["IBGE"]
+)
+
+api_router.include_router(
+    admin.router,
+    prefix="/admin",
+    tags=["Administration"]
 )
