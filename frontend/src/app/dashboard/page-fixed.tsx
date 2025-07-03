@@ -29,7 +29,7 @@ import MunicipalData from '@/components/MunicipalData';
 import { useLocationStore } from '@/stores/locationStore';
 
 export default function DashboardPage() {
-  const { analysisData, selectedLocation, currentLocation, mapCenter } = useLocationStore();
+  const { analysisData, selectedLocation } = useLocationStore();
 
   const modules = [
     {
@@ -124,37 +124,6 @@ export default function DashboardPage() {
     }
   };
 
-  const getModuleColors = (color: string) => {
-    const colorMap = {
-      blue: {
-        bg: 'bg-blue-100',
-        text: 'text-blue-600',
-        textHover: 'hover:text-blue-700'
-      },
-      green: {
-        bg: 'bg-green-100',
-        text: 'text-green-600',
-        textHover: 'hover:text-green-700'
-      },
-      purple: {
-        bg: 'bg-purple-100',
-        text: 'text-purple-600',
-        textHover: 'hover:text-purple-700'
-      },
-      orange: {
-        bg: 'bg-orange-100',
-        text: 'text-orange-600',
-        textHover: 'hover:text-orange-700'
-      },
-      emerald: {
-        bg: 'bg-emerald-100',
-        text: 'text-emerald-600',
-        textHover: 'hover:text-emerald-700'
-      }
-    };
-    return colorMap[color as keyof typeof colorMap] || colorMap.blue;
-  };
-
   const overallScore = modules.reduce((sum, module) => sum + module.score, 0) / modules.length;
 
   return (
@@ -167,7 +136,7 @@ export default function DashboardPage() {
         
         {/* Location Header */}
         <div className="mb-8">
-          <LocationHeader showDateTime={true} showRefresh={true} compact={true} />
+          <LocationHeader showDateTime={true} showRefresh={true} />
         </div>
 
         {/* Header */}
@@ -250,10 +219,7 @@ export default function DashboardPage() {
                 </h2>
               </div>
               <div className="h-96 rounded-lg overflow-hidden border border-gray-200">
-                <LeafletMap 
-                  selectedLocation={selectedLocation || currentLocation} 
-                  mapCenter={mapCenter}
-                />
+                <LeafletMap selectedLocation={selectedLocation} />
               </div>
             </div>
           </div>
@@ -306,15 +272,14 @@ export default function DashboardPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {modules.map((module) => {
               const IconComponent = module.icon;
-              const colors = getModuleColors(module.color);
               
               return (
                 <div key={module.id} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
                   <div className="p-6">
                     {/* Header */}
                     <div className="flex items-center justify-between mb-4">
-                      <div className={`w-12 h-12 rounded-lg ${colors.bg} flex items-center justify-center`}>
-                        <IconComponent className={`h-6 w-6 ${colors.text}`} />
+                      <div className={`w-12 h-12 rounded-lg bg-${module.color}-100 flex items-center justify-center`}>
+                        <IconComponent className={`h-6 w-6 text-${module.color}-600`} />
                       </div>
                       <div className="flex items-center gap-2">
                         <span className={`text-lg font-bold ${getScoreColor(module.score).split(' ')[1]}`}>
@@ -349,7 +314,7 @@ export default function DashboardPage() {
                     <div className="mt-4 pt-4 border-t border-gray-100">
                       <a
                         href={module.href}
-                        className={`inline-flex items-center gap-2 text-sm font-medium ${colors.text} ${colors.textHover}`}
+                        className={`inline-flex items-center gap-2 text-sm font-medium text-${module.color}-600 hover:text-${module.color}-700`}
                       >
                         Ver detalhes
                         <ArrowUpRight className="h-4 w-4" />

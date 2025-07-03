@@ -11,6 +11,7 @@ import {
   IBGEAreaData,
   IBGEDensityData 
 } from '@/services/apiService';
+import { useGeolocation } from '@/hooks/useGeolocation';
 
 interface MunicipalDataProps {
   municipalityId?: number;
@@ -26,10 +27,11 @@ export default function MunicipalData({
   const [data, setData] = useState<IBGECompleteData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { location } = useGeolocation();
 
   useEffect(() => {
     loadMunicipalData();
-  }, [municipalityId]);
+  }, [municipalityId, location]);
 
   const loadMunicipalData = async () => {
     setLoading(true);
@@ -41,6 +43,8 @@ export default function MunicipalData({
       if (municipalityId) {
         result = await IBGEBackendService.getCompleteMunicipalityData(municipalityId);
       } else {
+        // Usar município padrão (Itaperuna) por enquanto
+        // TODO: Implementar busca por nome da cidade detectada
         result = await IBGEBackendService.getDefaultMunicipality();
       }
       

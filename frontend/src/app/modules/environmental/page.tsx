@@ -29,7 +29,7 @@ import ModuleNavigation from '@/components/ModuleNavigation';
 import { useLocationStore } from '@/stores/locationStore';
 
 export default function EnvironmentalPage() {
-  const { analysisData, selectedLocation } = useLocationStore();
+  const { analysisData, selectedLocation, currentLocation, mapCenter } = useLocationStore();
   
   const environmentalData = analysisData?.modules.environmental;
   const score = environmentalData?.score || 6.8;
@@ -297,7 +297,10 @@ export default function EnvironmentalPage() {
                 </h2>
               </div>
               <div className="h-96 rounded-lg overflow-hidden border border-gray-200">
-                <LeafletMap selectedLocation={selectedLocation} />
+                <LeafletMap 
+                  selectedLocation={selectedLocation || currentLocation} 
+                  mapCenter={mapCenter}
+                />
               </div>
             </div>
           </div>

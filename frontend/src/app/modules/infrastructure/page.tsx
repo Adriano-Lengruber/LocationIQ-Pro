@@ -29,7 +29,7 @@ import ModuleNavigation from '@/components/ModuleNavigation';
 import { useLocationStore } from '@/stores/locationStore';
 
 export default function InfrastructurePage() {
-  const { analysisData, selectedLocation } = useLocationStore();
+  const { analysisData, selectedLocation, currentLocation, mapCenter } = useLocationStore();
   
   const infrastructureData = analysisData?.modules.infrastructure;
   const score = infrastructureData?.score || 8.8;
@@ -234,7 +234,10 @@ export default function InfrastructurePage() {
                 </h2>
               </div>
               <div className="h-96 rounded-lg overflow-hidden border border-gray-200">
-                <LeafletMap selectedLocation={selectedLocation} />
+                <LeafletMap 
+                  selectedLocation={selectedLocation || currentLocation} 
+                  mapCenter={mapCenter}
+                />
               </div>
             </div>
           </div>

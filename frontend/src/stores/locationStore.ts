@@ -38,7 +38,7 @@ interface LocationState {
 export const useLocationStore = create<LocationState>((set) => ({
   // Estado inicial
   currentLocation: null,
-  mapCenter: [-46.6333, -23.5505], // São Paulo como padrão
+  mapCenter: [-23.5505, -46.6333], // [lat, lng] - São Paulo como padrão
   mapZoom: 10,
   searchQuery: '',
   isSearching: false,
@@ -87,7 +87,7 @@ export const useLocationStore = create<LocationState>((set) => ({
     set({ 
       isAnalyzing: true, 
       selectedLocation: location,
-      mapCenter: [location.coordinates.lng, location.coordinates.lat]
+      mapCenter: [location.coordinates.lat, location.coordinates.lng] // Corrigir ordem
     });
     
     try {

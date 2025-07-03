@@ -22,7 +22,7 @@ interface MapComponentProps {
 }
 
 export default function MapComponent({ className }: MapComponentProps) {
-  const { selectedLocation } = useLocationStore();
+  const { selectedLocation, currentLocation, mapCenter } = useLocationStore();
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -40,10 +40,14 @@ export default function MapComponent({ className }: MapComponentProps) {
     );
   }
 
+  // Determinar qual localização usar (selecionada tem prioridade sobre atual)
+  const locationToShow = selectedLocation || currentLocation;
+
   return (
     <div className={`w-full h-[600px] min-h-[400px] ${className || ''}`}>
       <Map 
-        selectedLocation={selectedLocation}
+        selectedLocation={locationToShow}
+        mapCenter={mapCenter}
       />
     </div>
   );

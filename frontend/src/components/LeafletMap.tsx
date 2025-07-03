@@ -5,9 +5,10 @@ import { LocationData } from '@/services/mockDataService';
 
 interface LeafletMapProps {
   selectedLocation: LocationData | null;
+  mapCenter?: [number, number];
 }
 
-export default function LeafletMap({ selectedLocation }: LeafletMapProps) {
+export default function LeafletMap({ selectedLocation, mapCenter }: LeafletMapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<any>(null);
 
@@ -29,16 +30,19 @@ export default function LeafletMap({ selectedLocation }: LeafletMapProps) {
         });
 
         if (mapRef.current && !mapInstanceRef.current) {
-          // Coordenadas padrão (São Paulo)
+          // Usar mapCenter se fornecido, senão coordenadas da localização, senão São Paulo
           const defaultCenter: [number, number] = [-23.5505, -46.6333];
-          const defaultZoom = 11;
+          
+          let center: [number, number];
+          if (mapCenter) {
+            center = mapCenter;
+          } else if (selectedLocation) {
+            center = [selectedLocation.coordinates.lat, selectedLocation.coordinates.lng];
+          } else {
+            center = defaultCenter;
+          }
 
-          // Se há uma localização selecionada, usar suas coordenadas
-          const center: [number, number] = selectedLocation 
-            ? [selectedLocation.coordinates.lat, selectedLocation.coordinates.lng]
-            : defaultCenter;
-
-          const zoom = selectedLocation ? 13 : defaultZoom;
+          const zoom = (mapCenter || selectedLocation) ? 13 : 11;
 
           // Criar o mapa
           mapInstanceRef.current = L.map(mapRef.current).setView(center, zoom);
@@ -74,31 +78,47 @@ export default function LeafletMap({ selectedLocation }: LeafletMapProps) {
     };
   }, []);
 
-  // Atualizar mapa quando localização mudar
+  // Atualizar mapa quando localização ou centro mudar
   useEffect(() => {
-    if (mapInstanceRef.current && selectedLocation) {
-      mapInstanceRef.current.setView(
-        [selectedLocation.coordinates.lat, selectedLocation.coordinates.lng],
-        13
-      );
-
-      // Limpar marcadores existentes
-      mapInstanceRef.current.eachLayer((layer: any) => {
-        if (layer instanceof L.Marker) {
-          mapInstanceRef.current.removeLayer(layer);
-        }
-      });
-
-      // Adicionar novo marcador
-      const L = require('leaflet');
-      const marker = L.marker([selectedLocation.coordinates.lat, selectedLocation.coordinates.lng])
-        .addTo(mapInstanceRef.current);
+    if (mapInstanceRef.current) {
+      let newCenter: [number, number] | null = null;
       
-      if (selectedLocation.address) {
-        marker.bindPopup(`<b>${selectedLocation.address}</b>`);
+      // Prioridade: mapCenter > selectedLocation
+      if (mapCenter) {
+        newCenter = mapCenter;
+      } else if (selectedLocation) {
+        newCenter = [selectedLocation.coordinates.lat, selectedLocation.coordinates.lng];
+      }
+      
+      if (newCenter) {
+        console.log('🗺️ Atualizando centro do mapa para:', newCenter);
+        mapInstanceRef.current.setView(newCenter, 13);
+
+        // Limpar marcadores existentes (importar L novamente)
+        const L = require('leaflet');
+        mapInstanceRef.current.eachLayer((layer: any) => {
+          if (layer instanceof L.Marker) {
+            mapInstanceRef.current.removeLayer(layer);
+          }
+        });
+
+        // Adicionar novo marcador se há localização
+        if (selectedLocation) {
+          const marker = L.marker([selectedLocation.coordinates.lat, selectedLocation.coordinates.lng])
+            .addTo(mapInstanceRef.current);
+          
+          if (selectedLocation.address) {
+            marker.bindPopup(`<b>${selectedLocation.address}</b>`);
+          }
+        } else if (mapCenter) {
+          // Adicionar marcador genérico para centro do mapa
+          const marker = L.marker(mapCenter)
+            .addTo(mapInstanceRef.current);
+          marker.bindPopup(`<b>Localização Atual</b>`);
+        }
       }
     }
-  }, [selectedLocation]);
+  }, [selectedLocation, mapCenter]);
 
   return (
     <div 

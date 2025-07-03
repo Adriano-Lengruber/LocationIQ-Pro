@@ -31,7 +31,7 @@ import ModuleNavigation from '@/components/ModuleNavigation';
 import { useLocationStore } from '@/stores/locationStore';
 
 export default function HospitalityPage() {
-  const { analysisData, selectedLocation } = useLocationStore();
+  const { analysisData, selectedLocation, currentLocation, mapCenter } = useLocationStore();
   
   const hospitalityData = analysisData?.modules.hospitality;
   const score = hospitalityData?.score || 8.1;
@@ -287,7 +287,10 @@ export default function HospitalityPage() {
                 </h2>
               </div>
               <div className="h-96 rounded-lg overflow-hidden border border-gray-200">
-                <LeafletMap selectedLocation={selectedLocation} />
+                <LeafletMap 
+                  selectedLocation={selectedLocation || currentLocation} 
+                  mapCenter={mapCenter}
+                />
               </div>
             </div>
           </div>
