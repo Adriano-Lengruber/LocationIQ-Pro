@@ -16,22 +16,31 @@ import { useGeolocation } from '@/hooks/useGeolocation';
 interface MunicipalDataProps {
   municipalityId?: number;
   showDetails?: boolean;
+  showTitle?: boolean; // Nova prop para controlar exibição do título
   className?: string;
 }
 
 export default function MunicipalData({ 
   municipalityId, 
   showDetails = true, 
+  showTitle = true, // Padrão true para não quebrar outras páginas
   className = '' 
 }: MunicipalDataProps) {
   const [data, setData] = useState<IBGECompleteData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [loadedCity, setLoadedCity] = useState<string | null>(null); // Rastrear cidade carregada
   const { location } = useGeolocation();
 
   useEffect(() => {
-    loadMunicipalData();
-  }, [municipalityId, location]);
+    // Só recarregar se municipalityId mudou ou se a cidade detectada mudou
+    const cityChanged = location.city !== loadedCity && !location.loading;
+    const shouldLoad = municipalityId || (cityChanged && !location.error);
+    
+    if (shouldLoad) {
+      loadMunicipalData();
+    }
+  }, [municipalityId, location.city, location.loading, location.error]);
 
   const loadMunicipalData = async () => {
     setLoading(true);
@@ -50,6 +59,7 @@ export default function MunicipalData({
       
       if (result) {
         setData(result);
+        setLoadedCity(location.city); // Marcar cidade como carregada
       } else {
         setError('Não foi possível carregar os dados municipais');
       }
@@ -139,17 +149,19 @@ export default function MunicipalData({
   return (
     <div className={`p-6 ${className}`}>
       {/* Header com nome do município */}
-      <div className="mb-6">
-        <h2 className="text-2xl font-bold text-gray-900">
-          {data.basic_info?.nome || 'Município'}
-        </h2>
-        {data.basic_info && (
-          <p className="text-gray-600 mt-1">
-            {data.basic_info.microrregiao}
-            {data.basic_info.uf?.sigla && ` - ${data.basic_info.uf.sigla}`}
-          </p>
-        )}
-      </div>
+      {showTitle && (
+        <div className="mb-6">
+          <h2 className="text-2xl font-bold text-gray-900">
+            {data.basic_info?.nome || 'Município'}
+          </h2>
+          {data.basic_info && (
+            <p className="text-gray-600 mt-1">
+              {data.basic_info.microrregiao}
+              {data.basic_info.uf?.sigla && ` - ${data.basic_info.uf.sigla}`}
+            </p>
+          )}
+        </div>
+      )}
 
       {/* Cards principais */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">

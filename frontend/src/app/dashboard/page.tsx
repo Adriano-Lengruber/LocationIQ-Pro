@@ -238,7 +238,7 @@ export default function DashboardPage() {
                 Informações oficiais sobre população, área territorial e densidade demográfica
               </p>
             </div>
-            <MunicipalData showDetails={true} />
+            <MunicipalData showDetails={true} showTitle={false} />
           </div>
         </div>
 

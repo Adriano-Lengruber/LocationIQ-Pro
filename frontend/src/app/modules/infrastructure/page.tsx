@@ -133,62 +133,60 @@ export default function InfrastructurePage() {
       {/* Navigation */}
       <ModuleNavigation />
 
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center gap-4 mb-4">
-            <Link 
-              href="/dashboard"
-              className="p-2 hover:bg-white rounded-lg border border-gray-200 transition-colors"
-            >
-              <ArrowLeft className="h-5 w-5 text-gray-600" />
-            </Link>
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
-                <Store className="h-6 w-6 text-purple-600" />
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900">
-                  Análise de Infraestrutura
-                </h1>
-                <p className="text-gray-600">
-                  Transporte, conectividade e serviços urbanos
-                  {selectedLocation && (
-                    <span className="font-medium text-purple-600 ml-2">
-                      • {selectedLocation.city}
-                    </span>
-                  )}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Score Geral */}
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div className={`w-16 h-16 rounded-full border-2 flex items-center justify-center font-bold text-xl ${getScoreColor(score)}`}>
-                  {score.toFixed(1)}
+      {/* Header */}
+      <div className="bg-white border-b border-gray-200 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <Link
+                href="/dashboard"
+                className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
+              >
+                <ArrowLeft className="h-5 w-5" />
+                <span className="text-sm font-medium">Dashboard</span>
+              </Link>
+              
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center">
+                  <Store className="h-6 w-6 text-purple-600" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900">Score de Infraestrutura</h3>
-                  <p className="text-sm text-gray-600">
-                    Baseado em transporte, conectividade e serviços
+                  <h1 className="text-2xl font-bold text-gray-900">
+                    Análise de Infraestrutura
+                  </h1>
+                  <p className="text-gray-600">
+                    Transporte, conectividade e serviços urbanos
+                    {selectedLocation && (
+                      <span className="font-medium text-purple-600 ml-2">
+                        • {selectedLocation.city}
+                      </span>
+                    )}
                   </p>
                 </div>
               </div>
-              <div className="text-right">
-                <div className="flex items-center gap-2 text-green-600">
-                  <TrendingUp className="h-5 w-5" />
-                  <span className="font-medium">Em Desenvolvimento</span>
+            </div>
+
+            <div className="flex items-center gap-4">
+              <div className="bg-purple-50 border border-purple-200 rounded-xl p-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
+                    <TrendingUp className="h-4 w-4 text-purple-600" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-purple-900">Score Infraestrutura</p>
+                    <p className="text-2xl font-bold text-purple-600">
+                      {score.toFixed(1)}
+                    </p>
+                  </div>
                 </div>
-                <p className="text-sm text-gray-500 mt-1">Novos projetos em andamento</p>
               </div>
             </div>
           </div>
         </div>
+      </div>
 
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Search Section */}
         <div className="mb-8">
           <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
